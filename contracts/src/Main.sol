@@ -1,17 +1,30 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
-import "./Collection.sol";
+import "./GameCollection.sol";
+import "./UserCollection.sol";
 
 contract Main {
-  int private count;
-  mapping(int => Collection) private collections;
+  address private _owner; // l'administrateur
+
+  int private _count; // la quantité de collections de cartes
+  mapping(int => GameCollection) private gameCollections; // les différentes extensions de cartes
+  mapping(address => UserCollection) public userCollections; // les collections des utilisateurs
 
   constructor() {
-    count = 0;
+    _count = 0;
+    _owner = msg.sender;
   }
 
-  function createCollection(string calldata name, int cardCount) external {
-    collections[count++] = new Collection(name, cardCount);
+  function createGameCollection(string calldata name, int cardCount) external {
+    gameCollections[_count++] = new GameCollection(name, cardCount);
   }
+
+  function createUserCollection(address owner) external {
+    userCollections[owner] = new UserCollection();
+  }
+
+  // function getCollectionName(int id) public view returns (string) {
+  //   return collections[id].getName();
+  // }
 }
