@@ -41,9 +41,50 @@ const useWallet = () => {
 
 export const App = () => {
   const wallet = useWallet()
+  let balance = 0
+
+  const testCard = (cardNumber : number)  => {
+    if (!wallet) return
+    const { contract } = wallet
+    contract.addACard(cardNumber).then(() => {
+      console.log('Card added')
+    })
+    return true
+  }
+
+  // sans return
+  // const addACardPkmn = (pokemonNumber: number) => {
+  //   const userAddress: string = wallet?.details?.account || ''
+  //   if (userAddress === '') return
+  //   wallet?.contract.addACard(pokemonNumber)
+  // }
+
+  const addACardPkmn = (pokemonNumber: number) => {
+    const userAddress: string = wallet?.details?.account || ''
+    if (userAddress === '') return
+    wallet?.contract.addACard(pokemonNumber).then((owner: number) => {
+      console.log('Card added : ', owner)
+    })
+  }
+
+  const getBalance = () => {
+    const userAddress: string = wallet?.details?.account || ''
+    if (userAddress === '') return
+    const balance2 = 0
+    wallet?.contract.balanceOf(userAddress).then((balance2: number) => {
+      balance = balance2
+      console.log('Balance of : ', balance2)
+    })
+  }
+
   return (
     <div className={styles.body}>
       <h1>Welcome to Pokémon TCG</h1>
+      <p>wallet : {wallet?.details?.account}</p>
+
+      <button onClick={() => addACardPkmn(56079)}>Add Card</button>
+      <p>Balance of : {balance}</p>
+      <button onClick={() => getBalance()}>Refresh Balance</button>
     </div>
   )
 }

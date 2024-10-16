@@ -2,29 +2,37 @@
 pragma solidity ^0.8;
 
 import "./GameCollection.sol";
-import "./UserCollection.sol";
+import "./CardOwnership.sol";
 
-contract Main {
-  address private _owner; // l'administrateur
+contract Main is CardOwnership {
+	address private administrateur;
 
-  int private _count; // la quantité de collections de cartes
-  mapping(int => GameCollection) private gameCollections; // les différentes extensions de cartes
-  mapping(address => UserCollection) public userCollections; // les collections des utilisateurs
+	/*int private _count; // la quantité de collections de cartes
+	mapping(int => GameCollection) private gameCollections; // les différentes extensions de cartes */
+	constructor() {
+		administrateur = msg.sender;
+	}
 
-  constructor() {
-    _count = 0;
-    _owner = msg.sender;
-  }
+	function createGameCollection(string calldata name, int cardCount) external {
+		GameCollection gameCollections = new GameCollection(name, 0);
+		cardCollections[collectionCount] = gameCollections;
+		collectionCount++;
+	}
 
-  function createGameCollection(string calldata name, int cardCount) external {
-    gameCollections[_count++] = new GameCollection(name, cardCount);
-  }
+	function createGameCollection2() internal {
+		GameCollection gameCollections = new GameCollection("Wizard", 0);
+		cardCollections[collectionCount] = gameCollections;
+		collectionCount++;
+	}
 
-  function createUserCollection(address owner) external {
-    userCollections[owner] = new UserCollection();
-  }
+	/*function addACard(uint cardNumber) external {
+		// GameCollection gameCollection = cardCollections[collectionNumber];
 
-  // function getCollectionName(int id) public view returns (string) {
-  //   return collections[id].getName();
-  // }
+		createGameCollection2();
+		// Card card = new Card(cardNumber, "https://images.pokemontcg.io/xy1/1.png");
+		cardCollections[0].addCard(cardNumber, "https://images.pokemontcg.io/xy1/1.png");
+		// cardCollections[0].cards[0] = card;
+		// cardCollections[0].cardCount++;
+		// gameCollection.cardCount++;
+	}*/
 }

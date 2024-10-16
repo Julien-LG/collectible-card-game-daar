@@ -24,3 +24,5 @@ export const init = async (details: ethereum.Details) => {
 }
 
 export const myShip = () => contracts.Main.address
+
+//export const myOwner = ethers.Contract(ethers.constants.AddressZero, [], ethers.)
