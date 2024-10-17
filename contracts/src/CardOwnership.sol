@@ -106,14 +106,17 @@ contract CardOwnership is Ownable, ERC721 {
 
     }*/
 
-    function addACard(uint cardNumber) external returns (address) {
+    function addACard(uint cardNumber) external {
         GameCollection gameCollections = new GameCollection("Wizard", 0);
 		cardCollections[collectionCount] = gameCollections;
 		collectionCount++;
 		cardCollections[0].addCard(cardNumber, "https://images.pokemontcg.io/xy1/1.png");
-        Card c = cardCollections[0].getCard(cardNumber);
-        
-        // return c.owner();
-        return address(666);
 	}
+
+    function ownerNbCard() external view returns (uint16) {
+        // console.log("ownerNbCard");
+        // cardCollections[0].addCard(126, "https://images.pokemontcg.io/xy1/1.png");
+        // return uint16(cardCollections[0].getCardCount());
+        return 88; // ça ça marche
+    }
 }

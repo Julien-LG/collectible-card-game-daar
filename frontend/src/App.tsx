@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import styles from './styles.module.css'
 import * as ethereum from '@/lib/ethereum'
 import * as main from '@/lib/main'
+import { ethers } from 'ethers'
 
 type Canceler = () => void
 const useAffect = (
@@ -39,6 +40,10 @@ const useWallet = () => {
   }, [details, contract])
 }
 
+export async function loadOwnerNbCard(wallet: any) {
+  return await wallet?.contract.ownerNbCard()
+}
+
 export const App = () => {
   const wallet = useWallet()
   let balance = 0
@@ -62,9 +67,7 @@ export const App = () => {
   const addACardPkmn = (pokemonNumber: number) => {
     const userAddress: string = wallet?.details?.account || ''
     if (userAddress === '') return
-    wallet?.contract.addACard(pokemonNumber).then((owner: number) => {
-      console.log('Card added : ', owner)
-    })
+    wallet?.contract.addACard(pokemonNumber)
   }
 
   const getBalance = () => {
@@ -77,14 +80,29 @@ export const App = () => {
     })
   }
 
+  const getOwnerBalance = () => {
+    const userAddress: string = wallet?.details?.account || ''
+    if (userAddress === '') return
+    const balance2 = 89
+    wallet?.contract.ownerNbCard().then((balance2: number) => {
+      balance = balance2
+      console.log('Balance of : ', balance2)
+    })
+  }
+
+  const getvalue = loadOwnerNbCard(wallet).then((value) => {
+    balance = value
+    console.log("VALUE : ", value);
+  });
+
   return (
     <div className={styles.body}>
       <h1>Welcome to Pokémon TCG</h1>
       <p>wallet : {wallet?.details?.account}</p>
 
-      <button onClick={() => addACardPkmn(56079)}>Add Card</button>
+      <button onClick={() => addACardPkmn(5679)}>Add Card</button>
       <p>Balance of : {balance}</p>
-      <button onClick={() => getBalance()}>Refresh Balance</button>
+      <button onClick={() => getOwnerBalance()}>Refresh Balance</button>
     </div>
   )
 }
