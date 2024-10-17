@@ -11,7 +11,13 @@ contract CardOwnership is Ownable, ERC721 {
     uint public collectionCount;
     // mapping (uint => address) cardsApprovals;
 
+    uint cardNumberProvisoir = 0;
+
     constructor() Ownable(msg.sender) ERC721("Card", "CARD") {
+        GameCollection gameCollections = new GameCollection("Wizard", 0);
+		cardCollections[collectionCount] = gameCollections;
+		collectionCount++;
+		cardCollections[0].addCard(cardNumberProvisoir++, "https://images.pokemontcg.io/xy1/1.png");
     }
 
     // // Récupère une carte
@@ -106,17 +112,30 @@ contract CardOwnership is Ownable, ERC721 {
 
     }*/
 
-    function addACard(uint cardNumber) external {
-        GameCollection gameCollections = new GameCollection("Wizard", 0);
-		cardCollections[collectionCount] = gameCollections;
-		collectionCount++;
-		cardCollections[0].addCard(cardNumber, "https://images.pokemontcg.io/xy1/1.png");
+    function addACard() external {
+        // GameCollection gameCollections = new GameCollection("Wizard", 0);
+		// cardCollections[collectionCount] = gameCollections;
+		// collectionCount++;
+		cardCollections[0].addCard(cardNumberProvisoir++, "https://images.pokemontcg.io/xy1/1.png");
 	}
+
+    function getCardImage(uint idCard) external view returns (string memory) {
+        // return "https://images.pokemontcg.io/xy1/1.png";
+        return cardCollections[0].getCard(1).getImgLink();
+    }
 
     function ownerNbCard() external view returns (uint16) {
         // console.log("ownerNbCard");
         // cardCollections[0].addCard(126, "https://images.pokemontcg.io/xy1/1.png");
         // return uint16(cardCollections[0].getCardCount());
-        return 88; // ça ça marche
+        return uint16(balanceOf(address(msg.sender))); // ça ça marche
+    }
+
+    function totalBalance() public view returns (uint32) {
+        uint32 nb = 0;
+        for (uint i = 0; i < collectionCount; i++) {
+            nb += cardCollections[i].totalBalance();
+        }
+        return nb;
     }
 }

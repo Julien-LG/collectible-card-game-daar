@@ -32,8 +32,13 @@ contract GameCollection {
 		return false;
 	}
 
-	function getCard(uint tokenId) public view returns (Card) {
-		return cards[tokenId];
+	
+	function getCard(uint tokenId) public view returns (Card) { // On ne peux pas chercher une carte qui n'extiste pas
+		for (uint i = 0; i < cardCount; i++) {
+			if (cards[i].getId() == tokenId) {
+				return cards[i];
+			}
+		}
 	}
 
 	// Donne le nombre de carte d'un utilisateur
@@ -86,5 +91,13 @@ contract GameCollection {
 		for (uint i = 0; i < quantity; i++) { //TODO : ajouter des sécurités il ne faut pas ajouter une carte s'il n'y en a plus assez à mint
 			mint(to);
 		}
+	}
+
+	function totalBalance() public view returns (uint32) {
+		uint32 nb = 0;
+		for (uint i = 0; i < cardCount; i++) {
+			nb++;
+		}
+		return nb;
 	}
 }
