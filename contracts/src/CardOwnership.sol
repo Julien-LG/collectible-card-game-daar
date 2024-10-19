@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -17,7 +18,7 @@ contract CardOwnership is Ownable, ERC721 {
         GameCollection gameCollections = new GameCollection("Wizard", 0);
 		cardCollections[collectionCount] = gameCollections;
 		collectionCount++;
-		cardCollections[0].addCard(cardNumberProvisoir++, "https://images.pokemontcg.io/xy1/1.png");
+		cardCollections[0].addCard(cardNumberProvisoir++, "https://images.pokemontcg.io/xy1/1.png", address(0));
     }
 
     // // Récupère une carte
@@ -87,36 +88,9 @@ contract CardOwnership is Ownable, ERC721 {
         cardCollections[collectionNumber].mint(to, tokenId);
     }
 
-    /*function safeTransferFrom(address from, address to, uint tokenId, bytes data){
 
-    }
-
-    function safeTransferFrom(address from, address to, uint tokenId){
-
-    }
-
-    function approve(address to, uint tokenId) public view onlyOwner() {
-        cardsApprovals[tokenId] = to;
-        Approval(msg.sender, to, tokenId);
-    }
-
-    function setApprovalForAll(address operator, bool approved) public view {
-        ApprovalForAll(msg.sender, operator, approved);
-    }
-
-    function getApproved(uint tokenId){
-
-    }
-
-    function isApprovedForAll(address owner, bool operator){
-
-    }*/
-
-    function addACard() external {
-        // GameCollection gameCollections = new GameCollection("Wizard", 0);
-		// cardCollections[collectionCount] = gameCollections;
-		// collectionCount++;
-		cardCollections[0].addCard(cardNumberProvisoir++, "https://images.pokemontcg.io/xy1/1.png");
+    function addACard(address userAdr) external {
+		cardCollections[0].addCard(cardNumberProvisoir++, "https://images.pokemontcg.io/xy1/1.png", userAdr);
 	}
 
     function getCardImage(uint idCard) external view returns (string memory) {
@@ -125,10 +99,13 @@ contract CardOwnership is Ownable, ERC721 {
     }
 
     function ownerNbCard() external view returns (uint16) {
-        // console.log("ownerNbCard");
         // cardCollections[0].addCard(126, "https://images.pokemontcg.io/xy1/1.png");
         // return uint16(cardCollections[0].getCardCount());
         return uint16(balanceOf(address(msg.sender))); // ça ça marche
+    }
+
+    function giveMeThisCard(address userAdr) external {
+        cardCollections[0].getCard(0).transferOwnership(userAdr);
     }
 
     function totalBalance() public view returns (uint32) {

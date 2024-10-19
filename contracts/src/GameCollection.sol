@@ -41,6 +41,17 @@ contract GameCollection {
 		}
 	}
 
+	function transferCard(uint tokenId, address newOwner) public {
+		for (uint i = 0; i < cardCount; i++) {
+			if (cards[i].getId() == tokenId) {
+				Card card = cards[i];
+				address from = card.owner();
+				// card.transferFrom(from, newOwner, tokenId);
+				break;
+			}
+		}
+	}
+
 	// Donne le nombre de carte d'un utilisateur
 	function balanceOf(address owner) public view returns (uint) {
 		uint nb = 0;
@@ -56,14 +67,15 @@ contract GameCollection {
 	function ownerOf(uint tokenId) public view returns (address) {
 		for (uint i = 0; i < cardCount; i++) {
 			if (cards[i].getId() == tokenId) {
-				return cards[i].owner();
+				return cards[i].getOwnerCARD();
+				// return cards[i].owner();
 			}
 		}
 	}
 
 	// Ajoute une carte à la collection
-	function addCard(uint id, string memory imgLink) public {
-		cards[cardCount++] = new Card(id, imgLink);
+	function addCard(uint id, string memory imgLink, address userAdr) public {
+		cards[cardCount++] = new Card(id, imgLink, userAdr);
 	}
 
 	// Mint une carte de la collection

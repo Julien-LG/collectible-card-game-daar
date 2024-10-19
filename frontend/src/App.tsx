@@ -48,6 +48,8 @@ export const App = () => {
   const wallet = useWallet()
   const [balance, setBalance] = useState<number | null>(null)
   const [cardImg, setCardImg] = useState<string>('')
+  const [ownerCard, setOwnerCard] = useState<string>('idk')
+  const [adminAdr, setAdminAdr] = useState<string>('idk')
   // let balance = -1
 
   const testCard = (cardNumber : number)  => {
@@ -77,10 +79,16 @@ export const App = () => {
   }
 
   const addACardPkmn = () => {
-      const userAddress: string = wallet?.details?.account || ''
-      if (userAddress === '') return
-      wallet?.contract.addACard()
-    }
+    const userAddress: string = wallet?.details?.account || ''
+    if (userAddress === '') return
+    wallet?.contract.addACard(wallet?.details?.account)
+  }
+
+  const giveMeThisCard = () => {
+    const userAddress: string = wallet?.details?.account || ''
+    if (userAddress === '') return
+    wallet?.contract.giveMeThisCard(userAddress)
+  }
 
   const getOwnerBalance = () => {
     const userAddress: string = wallet?.details?.account || ''
@@ -99,10 +107,23 @@ export const App = () => {
       console.log("VALUE : ", value);
     });
   }
+
+  const getOwner = (cardId : number) => {
+    wallet?.contract.ownerOf(cardId).then((ownerAdress: string) => {
+      setOwnerCard(ownerAdress)
+      console.log('Owner card', cardId,' : ', ownerAdress)
+    })
+
+    wallet?.contract.getAdmin().then((ownerAdress: string) => {
+      setAdminAdr(ownerAdress)
+      console.log('Admin adress : ', ownerAdress)
+    })
+  }
   
   useEffect(() => {
     if (wallet) {
       getvalue()
+      getOwner(0)
     }
   }, [wallet]) // Re-appelle si le wallet change
 
@@ -119,6 +140,10 @@ export const App = () => {
       <p>Balance of : {balance !== null ? balance : 'Loading...'}</p>
       <button onClick={() => getOwnerBalance()}>Refresh Balance</button>
       <button onClick={() => getvalue()}>balance Balance</button>
+      <p>propery of : {ownerCard}</p>
+      <button onClick={() => getOwner(0)}>Reload property</button>
+      <p>admin adr is : {adminAdr}</p>
+      <button onClick={() => giveMeThisCard()}>change property</button>
 
       <img src={cardImg} /> 
     </div>

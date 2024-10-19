@@ -1,16 +1,24 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+
+import "./Main.sol";
 
 contract Card is Ownable {
     // string public name;
     uint private id;
     string private imgLink;
 
-    constructor(uint _id, string memory _imgLink) Ownable(msg.sender) {
+    // TODO : delete userAdr
+    constructor(uint _id, string memory _imgLink, address userAdr) Ownable(msg.sender) {
         id = _id;
         imgLink = _imgLink;
     }
+
+    function getOwnerCARD() public view returns (address) {
+		return this.owner();
+	}
 
     function getId() public view returns (uint) {
         return id;
@@ -20,7 +28,7 @@ contract Card is Ownable {
         return imgLink;
     }
 
-    function transferOwnership(address to) public override onlyOwner {
+    function transferOwnership(address to) public override {
         transferOwnership(to); // TODO : vérifier si ça fonctionne
     }
 }
