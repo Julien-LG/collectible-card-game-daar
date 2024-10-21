@@ -5,15 +5,20 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./Main.sol";
 
-contract Card is Ownable {
+contract Card is Ownable, ERC721 {
     // string public name;
     uint private id;
     string private imgLink;
 
     // TODO : delete userAdr
-    constructor(uint _id, string memory _imgLink, address userAdr) Ownable(msg.sender) {
+    constructor(uint _id, string memory _imgLink, address userAdr) Ownable(msg.sender) ERC721("Card", "CARD") {
         id = _id;
         imgLink = _imgLink;
+        // mint(userAdr);
+    }
+
+    function mint(address to) public {
+        _mint(to, id);
     }
 
     function getOwnerCARD() public view returns (address) {

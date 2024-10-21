@@ -7,36 +7,22 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Card.sol";
 import "./GameCollection.sol";
 
-contract CardOwnership is Ownable, ERC721 {
+contract CardOwnership is Ownable {
     mapping(uint => GameCollection) public cardCollections;
     uint public collectionCount;
     // mapping (uint => address) cardsApprovals;
 
     uint cardNumberProvisoir = 0;
 
-    constructor() Ownable(msg.sender) ERC721("Card", "CARD") {
+    constructor() Ownable(msg.sender) {
         GameCollection gameCollections = new GameCollection("Wizard", 0);
 		cardCollections[collectionCount] = gameCollections;
-		collectionCount++;
-		cardCollections[0].addCard(cardNumberProvisoir++, "https://images.pokemontcg.io/xy1/1.png", address(0));
+        collectionCount++;
+		cardCollections[0].addCard(cardNumberProvisoir++, "https://images.pokemontcg.io/xy1/1.png", msg.sender);
     }
-
-    // // Récupère une carte
-    // function mint(address to, uint tokenId, uint collectionNumber) public {
-    //     require(collectionNumber < collectionCount, "CardOwnership: collection does not exist");
-    //     uint numberOfCards = cardCollections[collectionNumber].getCardCount();
-
-    //     for (uint i = 0; i < numberOfCards; i++) {
-    //         if (cardCollections[collectionNumber].cards[i].owner() == address(0)) {
-    //             // _safeMint(to, tokenId);
-    //             cardCollections[collectionNumber].cards[i].transferOwnership(to);
-    //             break;
-    //         }
-    //     }
-    // }
     
     // Donne le nombre de cartes d'un utilisateur
-    function balanceOf(address owner) public view override returns (uint) {
+    function balanceOf(address owner) public view returns (uint) {
         uint nb = 0;
         for (uint i = 0; i < collectionCount; i++) {
             nb += cardCollections[i].balanceOf(owner);
@@ -45,7 +31,7 @@ contract CardOwnership is Ownable, ERC721 {
     }
 
     // Donne le propriétaire d'une carte
-    function ownerOf(uint tokenId) public view override returns (address) {
+    function ownerOf(uint tokenId) public view returns (address) {
         for (uint256 i = 0; i < collectionCount; i++) {
             address owner = cardCollections[i].ownerOf(tokenId);
             if (owner != address(0))
@@ -63,17 +49,6 @@ contract CardOwnership is Ownable, ERC721 {
         return -1;
     }
 
-    // Transfère une carte d'un utilisateur à un autre
-    function transferFrom(address from, address to, uint tokenId) public override {
-        require(from == ownerOf(tokenId), "CardOwnership: transfer of token that is not own");
-        require(to != address(0), "CardOwnership: transfer to the zero address");
-        int collectionNumber = getCollectionNbForCard(tokenId);
-        require(collectionNumber != -1, "CardOwnership: card does not exist");
-
-        cardCollections[uint(collectionNumber)].getCard(tokenId).transferOwnership(to);
-        emit Transfer(from, to, tokenId);
-    }
-
     // Récupère des cartes
     function mintSomeCards(address to, uint quantity, uint collectionNumber) public {
         require(collectionNumber < collectionCount, "CardOwnership: collection does not exist");
@@ -87,7 +62,6 @@ contract CardOwnership is Ownable, ERC721 {
 
         cardCollections[collectionNumber].mint(to, tokenId);
     }
-
 
     function addACard(address userAdr) external {
 		cardCollections[0].addCard(cardNumberProvisoir++, "https://images.pokemontcg.io/xy1/1.png", userAdr);
@@ -105,7 +79,8 @@ contract CardOwnership is Ownable, ERC721 {
     }
 
     function giveMeThisCard(address userAdr) external {
-        cardCollections[0].getCard(0).transferOwnership(userAdr);
+        // cardCollections[0].getCard(0).transferOwnership(userAdr);
+        cardCollections[0].transferCard(0, userAdr);
     }
 
     function totalBalance() public view returns (uint32) {

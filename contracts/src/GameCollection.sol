@@ -46,7 +46,7 @@ contract GameCollection {
 			if (cards[i].getId() == tokenId) {
 				Card card = cards[i];
 				address from = card.owner();
-				// card.transferFrom(from, newOwner, tokenId);
+				card.transferFrom(from, newOwner, tokenId);
 				break;
 			}
 		}
@@ -75,7 +75,9 @@ contract GameCollection {
 
 	// Ajoute une carte à la collection
 	function addCard(uint id, string memory imgLink, address userAdr) public {
-		cards[cardCount++] = new Card(id, imgLink, userAdr);
+		Card c = new Card(id, imgLink, userAdr);
+		cards[cardCount++] = c;
+		c.mint(userAdr);
 	}
 
 	// Mint une carte de la collection
