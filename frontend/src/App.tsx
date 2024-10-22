@@ -81,20 +81,20 @@ export const App = () => {
   const addACardPkmn = () => {
     const userAddress: string = wallet?.details?.account || ''
     if (userAddress === '') return
-    wallet?.contract.addACard(wallet?.details?.account)
+    wallet?.contract.mint(userAddress, 0)
   }
 
-  const giveMeThisCard = () => {
+  const transferCard = () => {
     const userAddress: string = wallet?.details?.account || ''
     if (userAddress === '') return
-    wallet?.contract.giveMeThisCard(userAddress)
+    wallet?.contract.transferCard(0, userAddress)
   }
 
   const getOwnerBalance = () => {
     const userAddress: string = wallet?.details?.account || ''
     if (userAddress === '') return
     const balance2 = 89
-    wallet?.contract.ownerNbCard().then((balance2: number) => {
+    wallet?.contract.ownerNbCard(userAddress).then((balance2: number) => {
       //balance = balance2
       console.log('Balance of : ', balance2)
     })
@@ -139,11 +139,11 @@ export const App = () => {
       {/* Affiche la balance avec une vérification */}
       <p>Balance of : {balance !== null ? balance : 'Loading...'}</p>
       <button onClick={() => getOwnerBalance()}>Refresh Balance</button>
-      <button onClick={() => getvalue()}>balance Balance</button>
+      <button onClick={() => getvalue()}>total Balance</button>
       <p>propery of : {ownerCard}</p>
       <button onClick={() => getOwner(0)}>Reload property</button>
       <p>admin adr is : {adminAdr}</p>
-      <button onClick={() => giveMeThisCard()}>change property</button>
+      <button onClick={() => transferCard()}>transfer card</button>
 
       <img src={cardImg} /> 
     </div>

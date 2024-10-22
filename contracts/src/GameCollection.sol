@@ -1,15 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
-import "./Card.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract GameCollection {
-	string public name;
-	uint public cardCount;
+contract GameCollection is Ownable, ERC721 {
 	mapping(uint => Card) public cards;
+	// numNFT => Card
+	uint public cardCount;
 
-	constructor(string memory _name, uint _cardCount) {
-		name = _name;
+	struct Card {
+        uint id; // id de la carte, peut exister en double
+        string imgLink;
+    }
+
+	constructor(string memory _name, uint _cardCount) Ownable(msg.sender) ERC721(_name, "CARD") {
 		cardCount = _cardCount;
 	}
 
@@ -20,20 +25,27 @@ contract GameCollection {
 
 	// Donne le nom de la collection
 	function getName() public view returns (string memory) {
-		return name;
+		return name();
+	}
+
+	function getLink(uint tokenId) public view returns (string memory) {
+		return cards[tokenId].imgLink;
+	}
+
+	// Mint une carte précise de la collection
+	function mint(uint tokenId) public {
+		cards[cardCount] = Card(tokenId, "https://images.pokemontcg.io/xy1/1.png");
+		cardCount++;
 	}
 
 	function isCardInCollection(uint tokenId) public view returns (bool) {
-		for (uint i = 0; i < cardCount; i++) {
-			if (cards[i].getId() == tokenId) {
-				return true;
-			}
+		if (tokenId < cardCount) {
+			return true;
 		}
 		return false;
 	}
-
 	
-	function getCard(uint tokenId) public view returns (Card) { // On ne peux pas chercher une carte qui n'extiste pas
+	/*function getCard(uint tokenId) public view returns (Card calldata) { // On ne peux pas chercher une carte qui n'extiste pas
 		for (uint i = 0; i < cardCount; i++) {
 			if (cards[i].getId() == tokenId) {
 				return cards[i];
@@ -41,7 +53,7 @@ contract GameCollection {
 		}
 	}
 
-	function transferCard(uint tokenId, address newOwner) public {
+	/*function transferCard(uint tokenId, address newOwner) public {
 		for (uint i = 0; i < cardCount; i++) {
 			if (cards[i].getId() == tokenId) {
 				Card card = cards[i];
@@ -90,15 +102,7 @@ contract GameCollection {
 		}
 	}
 
-	// Mint une carte précise de la collection
-	function mint(address to, uint tokenId) public {
-		for (uint i = 0; i < cardCount; i++) {
-			if (cards[i].owner() == address(0) && cards[i].getId() == tokenId) {
-				cards[i].transferOwnership(to);
-				break;
-			}
-		}
-	}
+	
 
 	// Donne un nombre de carte définit à un utilisateur
 	function mintSomeCards(address to, uint quantity) public {
@@ -113,5 +117,5 @@ contract GameCollection {
 			nb++;
 		}
 		return nb;
-	}
+	}*/
 }
