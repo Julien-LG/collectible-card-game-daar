@@ -1,8 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import styles from './styles.module.css'
-import * as ethereum from '@/lib/ethereum'
-import * as main from '@/lib/main'
-import { ethers } from 'ethers'
+import { useEffect, useMemo, useRef, useState } from 'react';
+import './App.css';
+import * as ethereum from '@/lib/ethereum';
+import * as main from '@/lib/main';
+import { ethers } from 'ethers';
+
+//Notre code pour le front-end
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import BoosterPage from './components/BoosterPage';
+import CollectionPage from './components/CollectionPage';
+import ShopPage from './components/ShopPage';
 
 type Canceler = () => void
 const useAffect = (
@@ -44,13 +50,16 @@ export async function loadOwnerNbCard(wallet: any) {
   return await wallet?.contract.totalBalance()
 }
 
-export const App = () => {
+export const App: React.FC = () => {
   const wallet = useWallet()
   const [balance, setBalance] = useState<number | null>(null)
   const [cardImg, setCardImg] = useState<string>('')
   const [ownerCard, setOwnerCard] = useState<string>('idk')
   const [adminAdr, setAdminAdr] = useState<string>('idk')
   // let balance = -1
+
+  const [boostersOwned, setBoostersOwned] = useState(0); // Track owned boosters
+
 
   const testCard = (cardNumber : number)  => {
     if (!wallet) return
@@ -135,7 +144,7 @@ export const App = () => {
     }
   }, [wallet]) // Re-appelle si le wallet change
 
-  return (
+  /*return (
     <div className={styles.body}>
       <h1>Welcome to Pokémon TCG</h1>
       <p>wallet : {wallet?.details?.account}</p>
@@ -143,8 +152,8 @@ export const App = () => {
       <button onClick={() => addACardPkmn()}>Add Card</button>
       <button onClick={() => getImageCardPkmn(0)}>get Card img 888</button>
       
-      {/* <p>Balance of : {balance}</p> */}
-      {/* Affiche la balance avec une vérification */}
+      {/* <p>Balance of : {balance}</p> *//*}
+      {/* Affiche la balance avec une vérification *//*}
       <p>Balance of : {balance !== null ? balance : 'Loading...'}</p>
       <button onClick={() => getOwnerBalance()}>Refresh Balance</button>
       <button onClick={() => getvalue()}>total Balance</button>
@@ -156,5 +165,31 @@ export const App = () => {
 
       <img src={cardImg} /> 
     </div>
-  )
+  )*/
+  return (
+    <Router>
+      <div className="App">
+        <nav>
+          <ul>
+            <li>
+              <Link to="/shop">Shop</Link>
+            </li>
+            <li>
+              <Link to="/">Booster</Link>
+            </li>
+            <li>
+              <Link to="/collection">Collection</Link>
+            </li>
+            
+          </ul>
+        </nav>
+
+        <Routes>
+          <Route path="/" element={<BoosterPage boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} />} />
+          <Route path="/collection" element={<CollectionPage/>} />
+          <Route path="/shop" element={<ShopPage boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} />} />
+        </Routes>
+      </div>
+    </Router>
+  );
 }
