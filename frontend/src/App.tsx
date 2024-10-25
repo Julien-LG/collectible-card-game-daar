@@ -90,11 +90,19 @@ export const App = () => {
     wallet?.contract.transferCard(0, userAddress)
   }
 
+  const getAllCardsLinks = () => {
+    const userAddress: string = wallet?.details?.account || ''
+    if (userAddress === '') return
+    wallet?.contract.getAllUserCards(userAddress).then((value: string[]) => {
+      console.log("VALUES IMG : ", value);
+    });
+  }
+
   const getOwnerBalance = () => {
     const userAddress: string = wallet?.details?.account || ''
     if (userAddress === '') return
     const balance2 = 89
-    wallet?.contract.ownerNbCard(userAddress).then((balance2: number) => {
+    wallet?.contract.balanceOf(userAddress).then((balance2: number) => {
       //balance = balance2
       console.log('Balance of : ', balance2)
     })
@@ -144,6 +152,7 @@ export const App = () => {
       <button onClick={() => getOwner(0)}>Reload property</button>
       <p>admin adr is : {adminAdr}</p>
       <button onClick={() => transferCard()}>transfer card</button>
+      <button onClick={() => getAllCardsLinks()}>get all cards links</button>
 
       <img src={cardImg} /> 
     </div>

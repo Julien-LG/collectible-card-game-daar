@@ -3,16 +3,14 @@ pragma solidity ^0.8;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+
+import "./StructCard.sol";
 
 contract GameCollection is Ownable, ERC721 {
 	mapping(uint => Card) public cards;
-	// numNFT => Card
+	// NFTid => Card
 	uint public cardCount;
-
-	struct Card {
-        uint id; // id de la carte, peut exister en double
-        string imgLink;
-    }
 
 	constructor(string memory _name, uint _cardCount) Ownable(msg.sender) ERC721(_name, "CARD") {
 		cardCount = _cardCount;
@@ -34,23 +32,24 @@ contract GameCollection is Ownable, ERC721 {
 
 	// Mint une carte précise de la collection
 	function mint(uint tokenId) public {
-		cards[cardCount] = Card(tokenId, "https://images.pokemontcg.io/xy1/1.png");
+		//https://images.pokemontcg.io/base1/60.png
+		//cards[cardCount] = Card(tokenId, "https://images.pokemontcg.io/xy1/1.png");
+		string memory firstPartLink = string.concat("https://images.pokemontcg.io/base1/", Strings.toString(cardCount+1));
+		cards[tokenId] = Card(tokenId, string.concat(firstPartLink, ".png"));
 		cardCount++;
 	}
 
 	function isCardInCollection(uint tokenId) public view returns (bool) {
-		if (tokenId < cardCount) {
-			return true;
-		}
-		return false;
+		return bytes(cards[tokenId].imgLink).length > 0; // Si l'imgLink n'est pas vide, la carte existe
 	}
 	
-	/*function getCard(uint tokenId) public view returns (Card calldata) { // On ne peux pas chercher une carte qui n'extiste pas
-		for (uint i = 0; i < cardCount; i++) {
-			if (cards[i].getId() == tokenId) {
-				return cards[i];
-			}
-		}
+	function getCard(uint tokenId) public view returns (Card memory) { // On ne peux pas chercher une carte qui n'extiste pas
+		Card memory c = cards[tokenId];
+		return c;
+	}
+
+	function getNbCards() public view returns (uint) {
+		return cardCount;
 	}
 
 	/*function transferCard(uint tokenId, address newOwner) public {
