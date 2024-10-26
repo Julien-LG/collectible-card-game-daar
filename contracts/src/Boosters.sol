@@ -3,6 +3,7 @@ pragma solidity ^0.8;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "hardhat/console.sol";
 
 contract Boosters is Ownable, ERC721 {
 
@@ -11,7 +12,7 @@ contract Boosters is Ownable, ERC721 {
         string imgLink;
         uint price;
         uint collectionId;
-        uint[] cardsId;
+        uint32[] cardsId;
     }
 
     mapping(uint => Booster) public boosters;
@@ -27,8 +28,9 @@ contract Boosters is Ownable, ERC721 {
         vacantPositionsCount = 0;
     }
 
-    function mint(address to, uint collectionId, uint[] memory cardsId) public {
+    function mint(address to, uint collectionId, uint32[] memory cardsId) public {
         uint newTokenId;
+        uint price = 200;
         if (vacantPositionsCount > 0) {
             newTokenId = vacantPositions[vacantPositionsCount];
             vacantPositionsCount--;
@@ -38,42 +40,72 @@ contract Boosters is Ownable, ERC721 {
             positionBoosterList++;
         }
         boostersOwners[newTokenId] = to;
-        boosters[newTokenId] = Booster(newTokenId, "https://i.seadn.io/gae/qw_fizCKFFTBRQtCsWFcTbdE1-lKZ81z-tLfQ1BDCtmx0MYZ_by6JZFeQ3dt2wSrDupJ7iBgcJ7tW7VMuwYmzDgfkjeqpm6NeCGAZg?auto=format&dpr=1&w=3840", 0, collectionId, cardsId);
+        boosters[newTokenId] = Booster(newTokenId, "https://i.seadn.io/gae/qw_fizCKFFTBRQtCsWFcTbdE1-lKZ81z-tLfQ1BDCtmx0MYZ_by6JZFeQ3dt2wSrDupJ7iBgcJ7tW7VMuwYmzDgfkjeqpm6NeCGAZg?auto=format&dpr=1&w=3840", price, collectionId, cardsId);
         boosterFreeCount++;
     }
 
     function burn(uint tokenId) public {
         // _burn(tokenId);
         boostersOwners[tokenId] = address(0);
-        boosters[tokenId] = Booster(0, "", 0, 0, new uint[](0));
+        boosters[tokenId] = Booster(0, "", 0, 0, new uint32[](0));
         vacantPositions[vacantPositionsCount] = tokenId;
         vacantPositionsCount++;
     }
 
-    function getBooster(uint collectionId) public view returns (uint tokenId) {
-        require(boosterFreeCount > 0, "Il n'y a pas de booster de disponible");
+    function burns() public {
+        for (uint i = 0; i < positionBoosterList; i++) {
+            if (boostersOwners[i] == address(0)) {
+                burn(i);
+            }
+        }
+    }
+
+    function getUserBoosterCount(address user, uint collectionId) public view returns (uint32) {
+        uint32 count = 0;
+        for (uint i = 0; i < positionBoosterList; i++) {
+            if (boostersOwners[i] == user && boosters[i].collectionId == collectionId) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    function getBooster(address user, uint collectionId) public view returns (uint tokenId) {
+        require(getUserBoosterCount(user, collectionId) > 0, "Il n'y a pas de booster de disponible");
 
         for (uint i = 0; i < positionBoosterList; i++) {
-            if (boosters[i].id !=0 && boosters[i].collectionId == collectionId) {
+            if (boostersOwners[i] == user && boosters[i].collectionId == collectionId) {
                 return i;
             }
         }
         return 0; // TODO : a modifier quand on gerera plusieurs collections
     }
 
-    function buyBooster(address to, uint tokenId) public {
+    function buyBooster(address admin, address to, uint collectionId) public payable {
         // require(msg.value == boosters[tokenId].price, "Le montant envoyé n'est pas suffisant");
         // payable(owner()).transfer(msg.value);
         // _transfer(owner(), to, tokenId);
-        boostersOwners[tokenId] = to;
+
+        console.log("buyBooster with total booster :",boosterFreeCount);
+        require(boosterFreeCount > 0, "Il n'y a pas de booster de disponible");
+        uint idBooster = getBooster(admin, collectionId);
+        
+        console.log("idBooster : ", idBooster);
+        require(msg.value == boosters[idBooster].price, "Le montant envoye n'est pas suffisant");
+        payable(owner()).transfer(msg.value);
+        boostersOwners[idBooster] = to;
         boosterFreeCount--;
     }
 
-    function openBooster(address user, uint collectionId) external returns (uint[] memory) {
+    function openBooster(address user, uint collectionId) external returns (uint32[] memory) {
         // uint[] memory table = new uint[](10);
         // for (uint i = 0; i < 10; i++) {
         //     table[i] = 1;
         // }
         
+        // require(getUserBoosterCount(user, collectionId) > 0, "Vous n'avez pas de booster de cette collection");
+        Booster memory b = boosters[getBooster(user, collectionId)];
+        boostersOwners[b.id] = address(0);
+        return b.cardsId;
     }
 }

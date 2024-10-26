@@ -126,18 +126,36 @@ contract Main is Ownable {
 		return links;
 	}
 
+	function mintBooster() public {
+		uint32[] memory cards = new uint32[](10); // la liste des idNFT des cartes du booster
+		
+		for (uint i = 0; i < 10; i++) {
+			// cards[i] = 1;
+			cards[i] = uint32(NFTcount);
+			mint(administrateur, 0);
+		}
+
+		boosters.mint(administrateur, 0, cards);
+	}
+
 	function getNbCardsCollection(uint collectionNumber) public view returns (uint) {
 		return collections[collectionNumber].getNbCards();
 	}
 
-	/*function buyABooster(address userAdr) public {
-		boosters.mint(userAdr);
+	function buyABooster(address userAdr) public payable {
+		boosters.buyBooster(administrateur, userAdr, 0);
 	}
 
-	/*function openABooster(address userAdr) public {
+	// Ouvre un booster et renvoie les ids des cartes obtenues
+	function openABooster(address userAdr) public returns (uint32[] memory) {
 		// boosters.mint(userAdr);
-		boosters
-	}*/
+		uint32[] memory cards = boosters.openBooster(userAdr, 0);
+		for (uint i = 0; i < cards.length; i++) {
+			transferCard(i, userAdr);
+		}
+		return cards;
+		//TODO : renvoie actuellement les id des NFT, mais il faut les id des cartes ou des refs aux cartes de l'API pour faire le lien
+	}
 
 	function createGameCollection(string calldata name, int cardCount) external {
 		GameCollection gameCollections = new GameCollection(name, 0);
