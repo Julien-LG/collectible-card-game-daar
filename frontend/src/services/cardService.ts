@@ -7,7 +7,7 @@ import { Subtype } from '../enums/subtype';
 import { Rarity } from '../enums/rarity';
 import { Client } from '../client';
 
-import { getAllSets } from './setService'; 
+import { getAllSets,findSetByID } from './setService'; 
 
 async function paginateAllCards(pageNumber: number, params?: Parameter): Promise<Card[]> {
     let currentPage = pageNumber;
@@ -74,19 +74,11 @@ export async function getRarities(): Promise<Rarity[]> {
 // Corrected function to get all cards from the first set
 export async function getCardsFromFirstSet(): Promise<Card[]> {
     const client: Client = Client.getInstance();
+
+    const firstSet = await findSetByID('base1');
+
     
-    // Fetch all sets using the getAllSets function
-    const allSets: Set[] = await getAllSets();
-    
-    if (allSets.length === 0) {
-        throw new Error("No sets found.");
-    }
-    
-    // Get the ID of the first set
-    const firstSetId = allSets[0].id;
-    
-    // Retrieve all cards from the first set by adding `set.id` query in `params`
-    const params: Parameter = { pageSize: 250, q: `set.id:${firstSetId}` };
+    const params: Parameter = { pageSize: 250, q: `set.id:${firstSet.id}` };
     const cardsFromFirstSet: Card[] = await client.get<Card[]>('cards', params);
 
     return cardsFromFirstSet;
@@ -99,8 +91,8 @@ export async function generateRandomCards(count: number = 10): Promise<Card[]> {
     const allCards = await getCardsFromFirstSet();
 
     // Separate cards into rare and non-rare categories
-    const rareCards = allCards.filter(card => card.rarity === 'Rare');
-    const nonRareCards = allCards.filter(card => card.rarity !== 'Rare');
+    const rareCards = allCards.filter(card => card.rarity === 'Rare Holo');
+    const nonRareCards = allCards.filter(card => card.rarity !== 'Rare Holo');
 
     // If there are no rare cards in the set, handle the error
     if (rareCards.length === 0) {
