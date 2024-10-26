@@ -6,6 +6,7 @@ import { ethers } from 'ethers';
 
 //Notre code pour le front-end
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import './App.css';
 import BoosterPage from './components/BoosterPage';
 import CollectionPage from './components/CollectionPage';
 import ShopPage from './components/ShopPage';
@@ -59,7 +60,14 @@ export const App: React.FC = () => {
   // let balance = -1
 
   const [boostersOwned, setBoostersOwned] = useState(0); // Track owned boosters
+  const [ownedCards, setOwnedCards] = useState<string[]>([]); // State for owned card IDs
 
+  const addOwnedCard = (id: string) => {
+    // Ajoute une carte à la collection si elle n'est pas déjà présente
+    if (!ownedCards.includes(id)) {
+      setOwnedCards((prev) => [...prev, id]);
+    }
+  };
 
   const testCard = (cardNumber : number)  => {
     if (!wallet) return
@@ -166,30 +174,30 @@ export const App: React.FC = () => {
       <img src={cardImg} /> 
     </div>
   )*/
-  return (
-    <Router>
-      <div className="App">
-        <nav>
-          <ul>
-            <li>
-              <Link to="/shop">Shop</Link>
-            </li>
-            <li>
-              <Link to="/">Booster</Link>
-            </li>
-            <li>
-              <Link to="/collection">Collection</Link>
-            </li>
-            
-          </ul>
-        </nav>
-
-        <Routes>
-          <Route path="/" element={<BoosterPage boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} />} />
-          <Route path="/collection" element={<CollectionPage/>} />
-          <Route path="/shop" element={<ShopPage boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} />} />
-        </Routes>
-      </div>
-    </Router>
-  );
+    return (
+      <Router>
+        <div className="App">
+          <nav>
+            <ul>
+              <li>
+                <Link to="/shop">Shop</Link>
+              </li>
+              <li>
+                <Link to="/">Booster</Link>
+              </li>
+              <li>
+                <Link to="/collection">Collection</Link>
+              </li>
+              
+            </ul>
+          </nav>
+  
+          <Routes>
+            <Route path="/" element={<BoosterPage boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} addOwnedCard={addOwnedCard}/>} />
+            <Route path="/collection" element={<CollectionPage ownedCards={ownedCards}/>} />
+            <Route path="/shop" element={<ShopPage boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} />} />
+          </Routes>
+        </div>
+      </Router>
+    );
 }

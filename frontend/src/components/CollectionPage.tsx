@@ -1,37 +1,47 @@
 // src/components/CollectionPage.tsx
-import React from 'react';
-import { PokemonCard, pokemonData } from '../data/pokemonData';
+import React, { useEffect, useState } from 'react';
+import { Card as CardInterface } from '../interfaces/card';
+import { getCardsFromFirstSet } from '../services/cardService';
 import Card from './Card';
 
 interface CollectionPageProps {
+  ownedCards: string[];
 }
 
-const CollectionPage: React.FC<CollectionPageProps> = () => {
-  //const pokemonData = usePokemonData();
+const CollectionPage: React.FC<CollectionPageProps> = ({ ownedCards }) => {
+  const [pokemonData, setPokemonData] = useState<CardInterface[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
+
+  useEffect(() => {
+    const fetchCards = async () => {
+        try {
+            const data = await getCardsFromFirstSet();
+            setPokemonData(data);
+        } catch (error : any) {
+            console.error("Failed to fetch cards:", error.message || error);
+        } finally {
+            setLoading(false); 
+        }
+    };
+
+    fetchCards();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="collection-page">
       <h1>Your Collection</h1>
       <div className="cards-collections">
-        {pokemonData.sort((a: PokemonCard, b: PokemonCard) => a.id - b.id).map((card: PokemonCard) => (
-          <Card key={card.id} card={card} owned={card.owned} allowFlip={false}/>
+        {pokemonData.map((card: CardInterface) => (
+          <Card key={card.id} card={card} owned={ownedCards.includes(card.id)} allowFlip={false} />
         ))}
       </div>
     </div>
   );
-
-
-  /*return (
-    <div className="collection-page">
-      <h1>Your Collection</h1>
-      <div className="cards-collections">
-        {pokemonData.map((card) => (
-          <Card key={card.id} card={card} owned={card.owned} allowFlip={false} />
-        ))}
-      </div>
-    </div>
-  );*/
 };
 
 export default CollectionPage;
