@@ -66,6 +66,7 @@ button {
     border-radius: 0.66em;
     scale: 1;
     transition: all var(--spring-duration) var(--spring-easing);
+    cursor: pointer;
 }
 
 button:hover:not(:active),
