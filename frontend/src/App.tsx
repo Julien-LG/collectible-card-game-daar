@@ -86,16 +86,6 @@ export const App: React.FC = () => {
   //   wallet?.contract.addACard(pokemonNumber)
   // }
 
-  const getImageCardPkmn = (pokemonNumber : number) => {
-    const userAddress: string = wallet?.details?.account || ''
-    if (userAddress === '') return
-
-    wallet?.contract.getCardImage(pokemonNumber).then((value: string) => {
-      setCardImg(value)
-      console.log("VALUE IMG : ", value);
-    });
-  }
-
   const addACardPkmn = () => {
     const userAddress: string = wallet?.details?.account || ''
     if (userAddress === '') return
@@ -108,13 +98,13 @@ export const App: React.FC = () => {
     wallet?.contract.transferCard(0, userAddress)
   }
 
-  const getAllCardsLinks = () => {
-    const userAddress: string = wallet?.details?.account || ''
-    if (userAddress === '') return
-    wallet?.contract.getAllUserCards(userAddress).then((value: string[]) => {
-      console.log("VALUES IMG : ", value);
-    });
-  }
+  // const getAllCardsLinks = () => {
+  //   const userAddress: string = wallet?.details?.account || ''
+  //   if (userAddress === '') return
+  //   wallet?.contract.getAllUserCards(userAddress).then((value: string[]) => {
+  //     console.log("VALUES IMG : ", value);
+  //   });
+  // }
 
   const getOwnerBalance = () => {
     const userAddress: string = wallet?.details?.account || ''
@@ -204,7 +194,7 @@ export const App: React.FC = () => {
 
         <Routes>
           <Route path="/" element={<BoosterPage wallet={wallet} boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} addOwnedCard={addOwnedCard}/>} />
-          <Route path="/collection" element={<CollectionPage wallet={wallet} ownedCards={ownedCards}/>} />
+          <Route path="/collection" element={<CollectionPage wallet={wallet} ownedCards={ownedCards} setOwnedCards={setOwnedCards}/>} />
           <Route path="/shop" element={<ShopPage wallet={wallet} boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} />} />
           {isAdmin() && (
             <Route path="/admin" element={<AdminPage wallet={wallet}/>} />

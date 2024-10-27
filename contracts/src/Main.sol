@@ -92,30 +92,23 @@ contract Main is Ownable {
 	function ownerOf(uint tokenId) public view returns (address) {
 		return owners[tokenId];
 	}
-	
-	// TODO : DELETE THIS 
-	// function addACard(address userAdr) external {
-	// 	// console.log("lets mint for ", userAdr);
-	// 	mint(userAdr, 0);
-	// 	NFTcount++;
-	// }
 
 	function getUserBoosterCount(address user) public view returns (uint32) {
 		return boosters.getUserBoosterCount(user, 0);
 	}
 
-	function getAllUserCards(address owner) public view returns (Card[] memory) {
+	function getAllUserCards(address owner) public view returns (string[] memory) {
 		uint nb = balanceOf(owner);
-		Card[] memory cards = new Card[](nb);
+		string[] memory cardsIds = new string[](nb);
 		uint indexNewTable = 0;
 
 		for (uint i = 0; i < NFTcount; i++) {
 			if (owners[i] == owner) {
-				cards[indexNewTable] = getCard(i);
+				cardsIds[indexNewTable] = getCard(i).id;
 				indexNewTable++;
 			}
 		}
-		return cards;
+		return cardsIds;
 	}
 
 	function mintBooster(string[] memory newCardsIds) public {
