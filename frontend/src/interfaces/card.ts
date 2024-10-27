@@ -38,5 +38,4 @@ export interface Card {
     legalities: ILegality;
     images: CardImage;
     tcgplayer?: TCGPlayer;
-    owned?: boolean; 
 }

@@ -1,9 +1,8 @@
 export enum Rarity {
-    AmazingRare = 'Amazing Rare',
     Common = 'Common',
-    Legend = 'LEGEND',
-    Promo = 'Promo',
+    Uncommon = 'Uncommon',
     Rare = 'Rare',
+    AmazingRare = 'Amazing Rare',
     RareAce = 'Rare ACE',
     RareBreak = 'Rare BREAK',
     RareHolo = 'Rare Holo',
@@ -21,5 +20,6 @@ export enum Rarity {
     RareShiny = 'Rare Shiny',
     RareShinyGX = 'Rare Shiny GX',
     RareUltra = 'Rare Ultra',
-    Uncommon = 'Uncommon',
+    Legend = 'LEGEND',
+    Promo = 'Promo',
 }

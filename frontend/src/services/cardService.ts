@@ -7,7 +7,7 @@ import { Subtype } from '../enums/subtype';
 import { Rarity } from '../enums/rarity';
 import { Client } from '../client';
 
-import { getAllSets,findSetByID } from './setService'; 
+import { findSetByID } from './setService'; 
 
 async function paginateAllCards(pageNumber: number, params?: Parameter): Promise<Card[]> {
     let currentPage = pageNumber;
