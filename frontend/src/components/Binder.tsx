@@ -21,6 +21,14 @@ const Binder: React.FC<BinderProps> = ({ wallet, ownedCards, setOwnedCards }) =>
 
     const CARDS_PER_PAGE = 25; 
 
+    // Charger les cartes à partir du localStorage lors du premier rendu
+    useEffect(() => {
+        const storedData = localStorage.getItem('pokemonData');
+        if (storedData) {
+            setPokemonData(JSON.parse(storedData));
+        }
+    }, []);
+
     useEffect(() => {
         if (wallet) {
         fetchOwnedCardIds();
@@ -131,6 +139,8 @@ const Binder: React.FC<BinderProps> = ({ wallet, ownedCards, setOwnedCards }) =>
     
         setPokemonData(updatedData);
         setDraggedCardIndex(null);
+
+        localStorage.setItem('pokemonData', JSON.stringify(updatedData));
     };
 
     if (loading) {
