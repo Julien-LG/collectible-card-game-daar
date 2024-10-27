@@ -37,6 +37,12 @@ export async function findCardByID(id: string): Promise<Card> {
     return response;
 }
 
+export async function getCardsFromIds(ids: string[]): Promise<Card[]> {
+    // Utiliser `Promise.all` pour attendre toutes les requêtes asynchrones de `findCardByID`
+    const cards = await Promise.all(ids.map(id => findCardByID(id)));
+    return cards;
+}
+
 export async function findCardsByQueries(params: Parameter): Promise<Card[]> {
     const client: Client = Client.getInstance();
     const response: Card[] = await client.get<Card[]>('cards', params);
@@ -86,7 +92,7 @@ export async function getCardsFromFirstSet(): Promise<Card[]> {
 
 // Modify the function to generate a specified number of random cards
 // including at least one rare card from the first set
-export async function generateRandomCards(count: number = 10): Promise<Card[]> {
+export async function generateRandomCardsIds(count: number = 10): Promise<string[]> {
     // Retrieve all cards from the first set
     const allCards = await getCardsFromFirstSet();
 
@@ -109,5 +115,8 @@ export async function generateRandomCards(count: number = 10): Promise<Card[]> {
     // Combine the selected rare card with the selected non-rare cards
     const selectedCards = [selectedRareCard, ...selectedNonRares];
 
-    return selectedCards;
+    // Extract and return the cards ids only
+    const selectedCardIds = selectedCards.map(card => card.id);
+
+    return selectedCardIds;
 }

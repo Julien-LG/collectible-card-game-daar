@@ -10,6 +10,7 @@ import './App.css';
 import BoosterPage from './components/BoosterPage';
 import CollectionPage from './components/CollectionPage';
 import ShopPage from './components/ShopPage';
+import AdminPage from './components/AdminPage';
 
 type Canceler = () => void
 const useAffect = (
@@ -144,6 +145,32 @@ export const App: React.FC = () => {
       console.log('Admin adress : ', ownerAdress)
     })
   }
+
+  const isAdmin = () => {
+    return wallet?.details?.account === adminAdr
+  }
+
+  // const createBooster = () => {
+  //   const userAddress: string = wallet?.details?.account || ''
+  //   if (userAddress === '') return
+  //   wallet?.contract.mintBooster()
+  // }
+
+  // const buyBooster = () => {
+  //   const userAddress: string = wallet?.details?.account || ''
+  //   if (userAddress === '') return
+
+  //   wallet?.contract.buyABooster(userAddress)
+  // }
+
+  // const openBooster = () => {
+  //   const userAddress: string = wallet?.details?.account || ''
+  //   if (userAddress === '') return
+
+  //   wallet?.contract.openABooster(userAddress).then((value: number[]) => {
+  //     console.log("VALUES IMG : ", value);
+  //   });
+  // }
   
   useEffect(() => {
     if (wallet) {
@@ -152,52 +179,38 @@ export const App: React.FC = () => {
     }
   }, [wallet]) // Re-appelle si le wallet change
 
-  /*return (
-    <div className={styles.body}>
-      <h1>Welcome to Pokémon TCG</h1>
-      <p>wallet : {wallet?.details?.account}</p>
+  /**/
+  return (
+    <Router>
+      <div className="App">
+        <nav>
+          <ul>
+            <li>
+              <Link to="/shop">Shop</Link>
+            </li>
+            <li>
+              <Link to="/">Booster</Link>
+            </li>
+            <li>
+              <Link to="/collection">Collection</Link>
+            </li>
+            {isAdmin() && (
+              <li>
+                <Link to="/admin">Admin</Link>
+              </li>
+            )}
+          </ul>
+        </nav>
 
-      <button onClick={() => addACardPkmn()}>Add Card</button>
-      <button onClick={() => getImageCardPkmn(0)}>get Card img 888</button>
-      
-      {/* <p>Balance of : {balance}</p> *//*}
-      {/* Affiche la balance avec une vérification *//*}
-      <p>Balance of : {balance !== null ? balance : 'Loading...'}</p>
-      <button onClick={() => getOwnerBalance()}>Refresh Balance</button>
-      <button onClick={() => getvalue()}>total Balance</button>
-      <p>propery of : {ownerCard}</p>
-      <button onClick={() => getOwner(0)}>Reload property</button>
-      <p>admin adr is : {adminAdr}</p>
-      <button onClick={() => transferCard()}>transfer card</button>
-      <button onClick={() => getAllCardsLinks()}>get all cards links</button>
-
-      <img src={cardImg} /> 
-    </div>
-  )*/
-    return (
-      <Router>
-        <div className="App">
-          <nav>
-            <ul>
-              <li>
-                <Link to="/shop">Shop</Link>
-              </li>
-              <li>
-                <Link to="/">Booster</Link>
-              </li>
-              <li>
-                <Link to="/collection">Collection</Link>
-              </li>
-              
-            </ul>
-          </nav>
-  
-          <Routes>
-            <Route path="/" element={<BoosterPage boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} addOwnedCard={addOwnedCard}/>} />
-            <Route path="/collection" element={<CollectionPage ownedCards={ownedCards}/>} />
-            <Route path="/shop" element={<ShopPage boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} />} />
-          </Routes>
-        </div>
-      </Router>
-    );
+        <Routes>
+          <Route path="/" element={<BoosterPage wallet={wallet} boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} addOwnedCard={addOwnedCard}/>} />
+          <Route path="/collection" element={<CollectionPage ownedCards={ownedCards}/>} />
+          <Route path="/shop" element={<ShopPage wallet={wallet} boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} />} />
+          {isAdmin() && (
+            <Route path="/admin" element={<AdminPage wallet={wallet}/>} />
+          )}
+        </Routes>
+      </div>
+    </Router>
+  );
 }

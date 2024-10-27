@@ -45,13 +45,14 @@ contract Main is Ownable {
 		owners[tokenId] = newOwner;
 	}
 
-	function mint(address to, uint collectionNumber) public {
-		collections[collectionNumber].mint(NFTcount);
+	function mint(address to, string memory cardId, uint collectionNumber) public {
+		collections[collectionNumber].mint(NFTcount, cardId);
 		owners[NFTcount] = to;
 		NFTcount++;
 		console.log("Minting for ", to);
 		console.log("in collection ", collectionNumber);
 		console.log("with tokenId ", NFTcount);
+		console.log("cardID : ", cardId);
 	}
 
 	function getCard(uint tokenId) public view returns (Card memory) {
@@ -62,15 +63,14 @@ contract Main is Ownable {
 		}
 	}
 
-	function getCardImage(uint tokenId) public view returns (string memory) {
-		for (uint i = 0; i < collectionCount; i++) {
-			if (collections[i].isCardInCollection(tokenId)) {
-				return collections[i].getLink(tokenId);
-			}
-		}
-	}
+	// function getCardImage(uint tokenId) public view returns (string memory) {
+	// 	for (uint i = 0; i < collectionCount; i++) {
+	// 		if (collections[i].isCardInCollection(tokenId)) {
+	// 			return collections[i].getLink(tokenId);
+	// 		}
+	// 	}
+	// }
 
-	//TODO : RENAME BALANCEOF
 	function balanceOf(address owner) public view returns (uint32) {
 		uint32 nb = 0;
 		for (uint i = 0; i < NFTcount; i++) {
@@ -92,10 +92,14 @@ contract Main is Ownable {
 	}
 	
 	// TODO : DELETE THIS 
-	function addACard(address userAdr) external {
-		// console.log("lets mint for ", userAdr);
-		mint(userAdr, 0);
-		NFTcount++;
+	// function addACard(address userAdr) external {
+	// 	// console.log("lets mint for ", userAdr);
+	// 	mint(userAdr, 0);
+	// 	NFTcount++;
+	// }
+
+	function getUserBoosterCount(address user) public view returns (uint32) {
+		return boosters.getUserBoosterCount(user, 0);
 	}
 
 	function getAllUserCards(address owner) public view returns (Card[] memory) {
@@ -112,46 +116,50 @@ contract Main is Ownable {
 		return cards;
 	}
 
-	function getAllUserCardsLinks(address owner) public view returns (string[] memory) {
-		uint nb = balanceOf(owner);
-		string[] memory links = new string[](nb);
-		uint indexNewTable = 0;
+	// function getAllUserCardsLinks(address owner) public view returns (string[] memory) {
+	// 	uint nb = balanceOf(owner);
+	// 	string[] memory links = new string[](nb);
+	// 	uint indexNewTable = 0;
 
-		for (uint i = 0; i < NFTcount; i++) {
-			if (owners[i] == owner) {
-				links[indexNewTable] = getCardImage(i);
-				indexNewTable++;
-			}
-		}
-		return links;
-	}
+	// 	for (uint i = 0; i < NFTcount; i++) {
+	// 		if (owners[i] == owner) {
+	// 			links[indexNewTable] = getCardImage(i);
+	// 			indexNewTable++;
+	// 		}
+	// 	}
+	// 	return links;
+	// }
 
-	function mintBooster() public {
-		uint32[] memory cards = new uint32[](10); // la liste des idNFT des cartes du booster
+	function mintBooster(string[] memory newCardsIds) public {
+		// uint32[] memory cards = new uint32[](10); // la liste des idNFT des cartes du booster
 		
 		for (uint i = 0; i < 10; i++) {
 			// cards[i] = 1;
-			cards[i] = uint32(NFTcount);
-			mint(administrateur, 0);
+			// cards[i] = uint32(NFTcount);
+			mint(administrateur, newCardsIds[i], 0);
 		}
 
-		boosters.mint(administrateur, 0, cards);
+		boosters.mint(administrateur, 0, newCardsIds);
 	}
 
 	function getNbCardsCollection(uint collectionNumber) public view returns (uint) {
 		return collections[collectionNumber].getNbCards();
 	}
 
-	function buyABooster(address userAdr) public payable {
+	function buyABooster(address userAdr) public {
 		boosters.buyBooster(administrateur, userAdr, 0);
 	}
 
 	// Ouvre un booster et renvoie les ids des cartes obtenues
-	function openABooster(address userAdr) public returns (uint32[] memory) {
+	function openABooster(address userAdr) public returns (string[] memory) {
 		// boosters.mint(userAdr);
-		uint32[] memory cards = boosters.openBooster(userAdr, 0);
+		string[] memory cards = boosters.openBooster(userAdr, 0);
 		for (uint i = 0; i < cards.length; i++) {
 			transferCard(i, userAdr);
+		}
+		console.log("LES CARTES ");
+		for (uint i = 0; i < cards.length; i++) {
+			console.log(cards[i]);
 		}
 		return cards;
 		//TODO : renvoie actuellement les id des NFT, mais il faut les id des cartes ou des refs aux cartes de l'API pour faire le lien

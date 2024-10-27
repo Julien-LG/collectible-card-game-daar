@@ -2,6 +2,5 @@
 pragma solidity ^0.8;
 
 struct Card {
-    uint id; // id de la carte, peut exister en double
-    string imgLink;
+    string id; // id de la carte sur l'API, peut exister en double
 }

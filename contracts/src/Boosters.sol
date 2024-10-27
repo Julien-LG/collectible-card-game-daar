@@ -12,7 +12,7 @@ contract Boosters is Ownable, ERC721 {
         string imgLink;
         uint price;
         uint collectionId;
-        uint32[] cardsId;
+        string[] cardsId;
     }
 
     mapping(uint => Booster) public boosters;
@@ -28,7 +28,7 @@ contract Boosters is Ownable, ERC721 {
         vacantPositionsCount = 0;
     }
 
-    function mint(address to, uint collectionId, uint32[] memory cardsId) public {
+    function mint(address to, uint collectionId, string[] memory cardsId) public {
         uint newTokenId;
         uint price = 200;
         if (vacantPositionsCount > 0) {
@@ -47,7 +47,7 @@ contract Boosters is Ownable, ERC721 {
     function burn(uint tokenId) public {
         // _burn(tokenId);
         boostersOwners[tokenId] = address(0);
-        boosters[tokenId] = Booster(0, "", 0, 0, new uint32[](0));
+        boosters[tokenId] = Booster(0, "", 0, 0, new string[](0));
         vacantPositions[vacantPositionsCount] = tokenId;
         vacantPositionsCount++;
     }
@@ -81,7 +81,7 @@ contract Boosters is Ownable, ERC721 {
         return 0; // TODO : a modifier quand on gerera plusieurs collections
     }
 
-    function buyBooster(address admin, address to, uint collectionId) public payable {
+    function buyBooster(address admin, address to, uint collectionId) public  { // TODO : payable
         // require(msg.value == boosters[tokenId].price, "Le montant envoyé n'est pas suffisant");
         // payable(owner()).transfer(msg.value);
         // _transfer(owner(), to, tokenId);
@@ -91,13 +91,13 @@ contract Boosters is Ownable, ERC721 {
         uint idBooster = getBooster(admin, collectionId);
         
         console.log("idBooster : ", idBooster);
-        require(msg.value == boosters[idBooster].price, "Le montant envoye n'est pas suffisant");
-        payable(owner()).transfer(msg.value);
+        // require(msg.value == boosters[idBooster].price, "Le montant envoye n'est pas suffisant");
+        // payable(owner()).transfer(msg.value);
         boostersOwners[idBooster] = to;
         boosterFreeCount--;
     }
 
-    function openBooster(address user, uint collectionId) external returns (uint32[] memory) {
+    function openBooster(address user, uint collectionId) external returns (string[] memory) {
         // uint[] memory table = new uint[](10);
         // for (uint i = 0; i < 10; i++) {
         //     table[i] = 1;

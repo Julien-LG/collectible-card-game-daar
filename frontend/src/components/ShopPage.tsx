@@ -1,15 +1,35 @@
 // src/components/ShopPage.tsx
 import React from 'react';
+import { useEffect } from 'react';
 
 interface ShopPageProps {
+  wallet : any; 
   boostersOwned: number; // Prop to receive the number of boosters owned
   setBoostersOwned: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const ShopPage: React.FC<ShopPageProps> = ({ boostersOwned, setBoostersOwned }) => {
+const ShopPage: React.FC<ShopPageProps> = ({ wallet, boostersOwned, setBoostersOwned }) => {
+  useEffect(() => {
+    if (wallet) {
+      nbBooster()
+    }
+  }, [wallet]) // Re-appelle si le wallet change
+
+  const nbBooster = () => {
+    const userAddress: string = wallet?.details?.account || ''
+    if (userAddress === '') return
+    wallet?.contract.getUserBoosterCount(userAddress).then((res: any) => {
+      setBoostersOwned(res)
+    })
+  }
+
   const buyBooster = () => {
+    const userAddress: string = wallet?.details?.account || ''
+    if (userAddress === '') return
+
+    wallet?.contract.buyABooster(userAddress)
     setBoostersOwned((prev) => prev + 1); // Increment the number of boosters owned
-  };
+  }
 
   return (
     <div className="shop-page">

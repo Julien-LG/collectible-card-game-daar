@@ -2,23 +2,39 @@
 import React, { useState, useEffect } from 'react';
 import Card from './Card';
 import { Card as CardInterface } from '../interfaces/card';
-import { generateRandomCards } from '../services/cardService';
+import { getCardsFromIds } from '../services/cardService';
 
 interface BoosterPageProps {
+  wallet: any;
   boostersOwned: number;
   setBoostersOwned: React.Dispatch<React.SetStateAction<number>>;
   addOwnedCard: (id: string) => void;
 }
 
-const BoosterPage: React.FC<BoosterPageProps> = ({ boostersOwned, setBoostersOwned,  addOwnedCard}) => {
+const BoosterPage: React.FC<BoosterPageProps> = ({ wallet, boostersOwned, setBoostersOwned,  addOwnedCard}) => {
   const [clicks, setClicks] = useState(0);
   const [isShaking, setIsShaking] = useState(false);
   const [cardsRevealed, setCardsRevealed] = useState(false);
   const [cards, setCards] = useState<CardInterface[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    if (wallet) {
+      nbBooster()
+    }
+  }, [wallet]) // Re-appelle si le wallet change
+
+  const nbBooster = () => {
+    const userAddress: string = wallet?.details?.account || ''
+    if (userAddress === '') return
+    wallet?.contract.getUserBoosterCount(userAddress).then((res: any) => {
+      setBoostersOwned(res)
+    })
+  }
 
   const handleBoosterClick = async () => {
+    const userAddress: string = wallet?.details?.account || ''
+    if (userAddress === '') return
     if (cardsRevealed || boostersOwned <= 0 || isLoading) return; // Ne pas ouvrir si pas de boosters
 
     setIsShaking(true);
@@ -31,13 +47,16 @@ const BoosterPage: React.FC<BoosterPageProps> = ({ boostersOwned, setBoostersOwn
     if (clicks + 1 >= 3) {
       setIsLoading(true);
 
-      const newCards = await generateRandomCards();
+      // await wallet?.contract.openABooster(userAddress).then((values: string[]) => {
+      //   console.log("VALUES IMG : ", values);
+      // });
+      const values = await wallet?.contract.openABooster(userAddress)
+      const newCards = await getCardsFromIds(values);
+      // essayer sans getCardsFormIDS, le faire à la main avec getCardFromId
       setCards(newCards);
       setCardsRevealed(true);
       setBoostersOwned((prev) => prev - 1);
-      
       newCards.forEach(card => addOwnedCard(card.id)); // Use the prop function to add owned cards
-
       setIsLoading(false);
       setClicks(0);
     }

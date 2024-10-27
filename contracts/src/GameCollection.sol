@@ -26,24 +26,21 @@ contract GameCollection is Ownable, ERC721 {
 		return name();
 	}
 
-	function getLink(uint tokenId) public view returns (string memory) {
-		return cards[tokenId].imgLink;
-	}
-
 	// Mint une carte précise de la collection
-	function mint(uint tokenId) public {
+	function mint(uint NFTid, string memory cardId) public {
 		//https://images.pokemontcg.io/base1/60.png
 		//cards[cardCount] = Card(tokenId, "https://images.pokemontcg.io/xy1/1.png");
-		string memory firstPartLink = string.concat("https://images.pokemontcg.io/base1/", Strings.toString(cardCount+1));
-		cards[tokenId] = Card(tokenId, string.concat(firstPartLink, ".png"));
+		// string memory firstPartLink = string.concat("https://images.pokemontcg.io/base1/", Strings.toString(cardCount+1));
+		// cards[tokenId] = Card(tokenId, string.concat(firstPartLink, ".png"));
+		cards[NFTid] = Card(cardId);
 		cardCount++;
 	}
 
 	function isCardInCollection(uint tokenId) public view returns (bool) {
-		return bytes(cards[tokenId].imgLink).length > 0; // Si l'imgLink n'est pas vide, la carte existe
+		return bytes(cards[tokenId].id).length > 0; // Si l'imgLink n'est pas vide, la carte existe
 	}
 	
-	function getCard(uint tokenId) public view returns (Card memory) { // On ne peux pas chercher une carte qui n'extiste pas
+	function getCard(uint tokenId) public view returns (Card memory) { // On ne peux pas chercher une carte qui n'existe pas
 		Card memory c = cards[tokenId];
 		return c;
 	}
