@@ -142,8 +142,8 @@ p {
 
 .card {
   perspective: 1000px; /* Allows for a 3D effect */
-  width: 165px; 
-  height: 227px; 
+  width: 294px; 
+  height: 400px; 
   margin: 20px;
 
   position: relative;
@@ -245,15 +245,20 @@ p {
 
 
 /* Card collection styles */
-
-.sorting-buttons{
+.sorting-buttons {
+  position: sticky;
+  bottom: 0; 
   display: flex;
   justify-content: center;
   gap: 30px;
-  margin-top: 20px;
-  margin-bottom: 50px;
-  width: 100%;
+  margin: 20px auto 0; /* Centering with auto left and right margins */
+  padding: 15px 0; 
+  width: 50%; /* Defined width to center */
+  z-index: 10;
+  background-color: rgba(71, 61, 139, 0.8);
+  border-radius: 20px 20px 0 0;
 }
+
 .search-bar input{
   height: 50px;
   width: 50px;
@@ -278,3 +283,4 @@ p {
   letter-spacing: 2px;
   font-weight: 100;
 }
+
