@@ -10,6 +10,7 @@ import './App.css';
 import BoosterPage from './components/BoosterPage';
 import CollectionPage from './components/CollectionPage';
 import ShopPage from './components/ShopPage';
+import Binder from './components/Binder';
 import MarketplacePage from './components/MarketplacePage';
 import AdminPage from './components/AdminPage';
 
@@ -59,8 +60,6 @@ export const App: React.FC = () => {
   const [cardImg, setCardImg] = useState<string>('')
   const [ownerCard, setOwnerCard] = useState<string>('idk')
   const [adminAdr, setAdminAdr] = useState<string>('idk')
-  // let balance = -1
-
   const [boostersOwned, setBoostersOwned] = useState(0); // Track owned boosters
   const [ownedCards, setOwnedCards] = useState<string[]>([]); // State for owned card IDs
 
@@ -116,6 +115,9 @@ export const App: React.FC = () => {
               <Link to="/collection">Collection</Link>
             </li>
             <li>
+              <Link to="/binder">Binder</Link>
+            </li>
+            <li>
               <Link to="/marketplace">Marketplace</Link>
             </li>
             {isAdmin() && (
@@ -129,6 +131,7 @@ export const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<BoosterPage wallet={wallet} boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} addOwnedCard={addOwnedCard}/>} />
           <Route path="/collection" element={<CollectionPage wallet={wallet} ownedCards={ownedCards} setOwnedCards={setOwnedCards}/>} />
+          <Route path="/binder" element={<Binder wallet={wallet} ownedCards={ownedCards} setOwnedCards={setOwnedCards} />} />
           <Route path="/shop" element={<ShopPage wallet={wallet} boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} />} />
           <Route path="/marketplace" element={<MarketplacePage wallet={wallet} ownedCards={ownedCards} setOwnedCards={setOwnedCards} />} />
           {isAdmin() && (
