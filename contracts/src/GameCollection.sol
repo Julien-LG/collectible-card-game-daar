@@ -11,6 +11,8 @@ contract GameCollection is Ownable, ERC721 {
 	mapping(uint => Card) public cards;
 	// NFTid => Card
 	uint public cardCount;
+	mapping(uint => uint) public NFTids;
+	// cardCount => NFTid
 
 	constructor(string memory _name, uint _cardCount) Ownable(msg.sender) ERC721(_name, "CARD") {
 		cardCount = _cardCount;
@@ -32,8 +34,64 @@ contract GameCollection is Ownable, ERC721 {
 		//cards[cardCount] = Card(tokenId, "https://images.pokemontcg.io/xy1/1.png");
 		// string memory firstPartLink = string.concat("https://images.pokemontcg.io/base1/", Strings.toString(cardCount+1));
 		// cards[tokenId] = Card(tokenId, string.concat(firstPartLink, ".png"));
-		cards[NFTid] = Card(cardId);
+		cards[NFTid] = Card(cardId, false, 0);
+		NFTids[cardCount] = NFTid;
 		cardCount++;
+	}
+
+	// Renvoie la liste des cartes correspondant à un id à vendre ou non
+	function getCardsForSale(string memory cardId, bool isForSale) public view returns (Card[] memory) {
+		uint nbCards = 0;
+		for (uint i = 0; i < cardCount; i++) {
+			Card memory c = cards[NFTids[i]];
+			if (keccak256(bytes(c.id)) == keccak256(bytes(cardId)) && c.isForSale == isForSale) {
+				nbCards++;
+			}
+		}
+
+		Card[] memory cardsFound = new Card[](nbCards);
+		uint index = 0;
+		for (uint i = 0; i < cardCount; i++) {
+			Card memory c = cards[NFTids[i]];
+			if (keccak256(bytes(c.id)) == keccak256(bytes(cardId)) && c.isForSale == isForSale) {
+				cardsFound[index] = cards[i];
+				index++;
+			}
+		}
+		return cardsFound;
+	}
+
+	// Renvoie la liste des ids de NFT correspondant à un id de carte à vendre ou non
+	function getNFTidsForSale(string memory cardId, bool isForSale) public view returns (uint[] memory) {
+		uint nbCards = 0;
+		for (uint i = 0; i < cardCount; i++) {
+			Card memory c = cards[NFTids[i]];
+			if (keccak256(bytes(c.id)) == keccak256(bytes(cardId)) && c.isForSale == isForSale) {
+				nbCards++;
+			}
+		}
+
+		uint[] memory cardsFound = new uint[](nbCards);
+		uint index = 0;
+		for (uint i = 0; i < cardCount; i++) {
+			Card memory c = cards[NFTids[i]];
+			if (keccak256(bytes(c.id)) == keccak256(bytes(cardId)) && c.isForSale == isForSale) {
+				cardsFound[index] = i;
+				index++;
+			}
+		}
+		return cardsFound;
+	}
+
+	function sellCard(uint NFTid, uint price) public {
+		cards[NFTid].isForSale = true;
+		cards[NFTid].price = price;
+	}
+
+	function buyCard(uint NFTid) public {
+		require(cards[NFTid].isForSale, "Card is not for sale");
+		cards[NFTid].isForSale = false;
+		cards[NFTid].price = 0;
 	}
 
 	function isCardInCollection(uint tokenId) public view returns (bool) {

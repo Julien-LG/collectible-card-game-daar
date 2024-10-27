@@ -59,7 +59,6 @@ export const App: React.FC = () => {
   const [cardImg, setCardImg] = useState<string>('')
   const [ownerCard, setOwnerCard] = useState<string>('idk')
   const [adminAdr, setAdminAdr] = useState<string>('idk')
-  // let balance = -1
 
   const [boostersOwned, setBoostersOwned] = useState(0); // Track owned boosters
   const [ownedCards, setOwnedCards] = useState<string[]>([]); // State for owned card IDs
@@ -70,22 +69,6 @@ export const App: React.FC = () => {
       setOwnedCards((prev) => [...prev, id]);
     }
   };
-
-  const testCard = (cardNumber : number)  => {
-    if (!wallet) return
-    const { contract } = wallet
-    contract.addACard(cardNumber).then(() => {
-      console.log('Card added')
-    })
-    return true
-  }
-
-  // sans return
-  // const addACardPkmn = (pokemonNumber: number) => {
-  //   const userAddress: string = wallet?.details?.account || ''
-  //   if (userAddress === '') return
-  //   wallet?.contract.addACard(pokemonNumber)
-  // }
 
   const addACardPkmn = () => {
     const userAddress: string = wallet?.details?.account || ''
@@ -99,76 +82,9 @@ export const App: React.FC = () => {
     wallet?.contract.transferCard(0, userAddress)
   }
 
-  // const getAllCardsLinks = () => {
-  //   const userAddress: string = wallet?.details?.account || ''
-  //   if (userAddress === '') return
-  //   wallet?.contract.getAllUserCards(userAddress).then((value: string[]) => {
-  //     console.log("VALUES IMG : ", value);
-  //   });
-  // }
-
-  const getOwnerBalance = () => {
-    const userAddress: string = wallet?.details?.account || ''
-    if (userAddress === '') return
-    const balance2 = 89
-    wallet?.contract.balanceOf(userAddress).then((balance2: number) => {
-      //balance = balance2
-      console.log('Balance of : ', balance2)
-    })
-  }
-
-  // fonctionne
-  const getvalue = () => {
-    loadOwnerNbCard(wallet).then((value) => {
-      setBalance(value)
-      console.log("VALUE : ", value);
-    });
-  }
-
-  const getOwner = (cardId : number) => {
-    wallet?.contract.ownerOf(cardId).then((ownerAdress: string) => {
-      setOwnerCard(ownerAdress)
-      console.log('Owner card', cardId,' : ', ownerAdress)
-    })
-
-    wallet?.contract.getAdmin().then((ownerAdress: string) => {
-      setAdminAdr(ownerAdress)
-      console.log('Admin adress : ', ownerAdress)
-    })
-  }
-
   const isAdmin = () => {
     return wallet?.details?.account === adminAdr
   }
-
-  // const createBooster = () => {
-  //   const userAddress: string = wallet?.details?.account || ''
-  //   if (userAddress === '') return
-  //   wallet?.contract.mintBooster()
-  // }
-
-  // const buyBooster = () => {
-  //   const userAddress: string = wallet?.details?.account || ''
-  //   if (userAddress === '') return
-
-  //   wallet?.contract.buyABooster(userAddress)
-  // }
-
-  // const openBooster = () => {
-  //   const userAddress: string = wallet?.details?.account || ''
-  //   if (userAddress === '') return
-
-  //   wallet?.contract.openABooster(userAddress).then((value: number[]) => {
-  //     console.log("VALUES IMG : ", value);
-  //   });
-  // }
-  
-  useEffect(() => {
-    if (wallet) {
-      getvalue()
-      getOwner(0)
-    }
-  }, [wallet]) // Re-appelle si le wallet change
 
   /**/
   return (

@@ -37,24 +37,16 @@ contract Main is Ownable {
 		console.log("----- receive:", msg.value);
 	}
 
-	// TODO : utiliser les events pour mettre à jour la chaine ?
-
 	function getAdmin() public view returns (address) {
 		return administrateur;
 	}
 
-	function transferCard(uint tokenId, address newOwner) public {
-		owners[tokenId] = newOwner;
+	function totalNFT() public view returns (uint32) {
+		return uint32(NFTcount);
 	}
 
-	function mint(address to, string memory cardId, uint collectionNumber) public {
-		collections[collectionNumber].mint(NFTcount, cardId);
-		owners[NFTcount] = to;
-		NFTcount++;
-		console.log("Minting for ", to);
-		console.log("in collection ", collectionNumber);
-		console.log("with tokenId ", NFTcount);
-		console.log("cardID : ", cardId);
+	function transferCard(uint tokenId, address newOwner) public {
+		owners[tokenId] = newOwner;
 	}
 
 	function getCard(uint tokenId) public view returns (Card memory) {
@@ -64,14 +56,6 @@ contract Main is Ownable {
 			}
 		}
 	}
-
-	// function getCardImage(uint tokenId) public view returns (string memory) {
-	// 	for (uint i = 0; i < collectionCount; i++) {
-	// 		if (collections[i].isCardInCollection(tokenId)) {
-	// 			return collections[i].getLink(tokenId);
-	// 		}
-	// 	}
-	// }
 
 	function balanceOf(address owner) public view returns (uint32) {
 		uint32 nb = 0;
@@ -85,16 +69,8 @@ contract Main is Ownable {
 		return nb;
 	}
 
-	function totalBalance() public view returns (uint32) {
-		return uint32(NFTcount);
-	}
-
 	function ownerOf(uint tokenId) public view returns (address) {
 		return owners[tokenId];
-	}
-
-	function getUserBoosterCount(address user) public view returns (uint32) {
-		return boosters.getUserBoosterCount(user, 0);
 	}
 
 	function getAllUserCards(address owner) public view returns (string[] memory) {
@@ -110,6 +86,62 @@ contract Main is Ownable {
 		}
 		return cardsIds;
 	}
+	
+	function getNbCardsCollection(uint collectionNumber) public view returns (uint) {
+		return collections[collectionNumber].getNbCards();
+	}
+
+	// GESTION DES CARTES
+
+	function mint(address to, string memory cardId, uint collectionNumber) public {
+		collections[collectionNumber].mint(NFTcount, cardId);
+		owners[NFTcount] = to;
+		NFTcount++;
+		console.log("Minting for ", to);
+		console.log("in collection ", collectionNumber);
+		console.log("with tokenId ", NFTcount);
+		console.log("cardID : ", cardId);
+	}
+
+	function sellCard(string memory cardId, address owner, uint price) public {
+		uint collectionNumber = 0;
+		uint[] memory cards = collections[collectionNumber].getNFTidsForSale(cardId, false);
+
+		for (uint i = 0; i < cards.length; i++) {
+			if (owners[i] == owner) {
+				collections[collectionNumber].sellCard(i, price);
+				break;
+			}
+		}
+	}
+
+	function buyCard(string memory cardId) public payable {
+		uint collectionNumber = 0;
+		uint[] memory cards = collections[collectionNumber].getNFTidsForSale(cardId, true);
+		
+		for (uint i = 0; i < cards.length; i++) {
+			if (owners[i] != msg.sender) {
+				Card memory card = collections[collectionNumber].getCard(i);
+				address seller = owners[i];
+				if (msg.value == card.price) {
+					require(seller != msg.sender, "Buyer cannot be the owner");
+					require(msg.value >= card.price, "Not enough money");
+
+					// Effectuer le paiement
+        			(bool sent, ) = payable(seller).call{value: msg.value}("");
+        			require(sent, "Payment to seller failed");
+
+					// payable(owners[i]).transfer(msg.sender.balance);
+
+					owners[i] = msg.sender;
+					collections[collectionNumber].buyCard(i);
+					break;
+				}
+			}
+		}
+	}
+
+	// GESTION DES BOOSTERS
 
 	function mintBooster(string[] memory newCardsIds) public {
 		for (uint i = 0; i < 10; i++) {
@@ -119,15 +151,15 @@ contract Main is Ownable {
 		boosters.mint(administrateur, 0, newCardsIds);
 	}
 
-	function getNbCardsCollection(uint collectionNumber) public view returns (uint) {
-		return collections[collectionNumber].getNbCards();
-	}
-
 	function buyABooster(address userAdr) public {
 		boosters.buyBooster(administrateur, userAdr, 0);
 	}
 
-	// Ouvre un booster et renvoie les ids des cartes obtenues
+	function getUserBoosterCount(address user) public view returns (uint32) {
+		return boosters.getUserBoosterCount(user, 0);
+	}
+
+	// Ouvre un booster et renvoie les ids des cartes obtenues par un event
 	function openABooster(address userAdr) public {
 		string[] memory cards = boosters.openBooster(userAdr, 0);
 		for (uint i = 0; i < cards.length; i++) {
@@ -140,6 +172,8 @@ contract Main is Ownable {
 
 		emit BoosterOpened(cards);
 	}
+
+	// GESTION DES COLLECTIONS
 
 	function createGameCollection(string calldata name, int cardCount) external {
 		GameCollection gameCollections = new GameCollection(name, 0);
