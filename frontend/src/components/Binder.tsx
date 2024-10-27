@@ -1,4 +1,5 @@
 // src/components/Binder.tsx
+import styles from '../binder.css';
 import React, { useEffect, useState } from 'react';
 import { Card as CardInterface } from '../interfaces/card';
 import { getCardsFromIds } from '../services/cardService';

@@ -60,7 +60,6 @@ export const App: React.FC = () => {
   const [cardImg, setCardImg] = useState<string>('')
   const [ownerCard, setOwnerCard] = useState<string>('idk')
   const [adminAdr, setAdminAdr] = useState<string>('idk')
-
   const [boostersOwned, setBoostersOwned] = useState(0); // Track owned boosters
   const [ownedCards, setOwnedCards] = useState<string[]>([]); // State for owned card IDs
 
