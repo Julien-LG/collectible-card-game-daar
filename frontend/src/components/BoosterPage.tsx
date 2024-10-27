@@ -46,12 +46,19 @@ const BoosterPage: React.FC<BoosterPageProps> = ({ wallet, boostersOwned, setBoo
 
     if (clicks + 1 >= 3) {
       setIsLoading(true);
-
-      // await wallet?.contract.openABooster(userAddress).then((values: string[]) => {
-      //   console.log("VALUES IMG : ", values);
-      // });
       const values = await wallet?.contract.openABooster(userAddress)
-      const newCards = await getCardsFromIds(values);
+      const receipt = await values.wait(); // Attendre la confirmation de transaction
+      let newCardsIds = null;
+
+      // On récupère les cartes ouvertes en checkant l'event BoosterOpened
+      for (const event of receipt.events || []) {
+        if (event.event === 'BoosterOpened') {
+          console.log('Booster opened:', event.args?.[0]);
+          newCardsIds = event.args?.[0];
+        }
+      }
+      
+      const newCards = await getCardsFromIds(newCardsIds);
       // essayer sans getCardsFormIDS, le faire à la main avec getCardFromId
       setCards(newCards);
       setCardsRevealed(true);

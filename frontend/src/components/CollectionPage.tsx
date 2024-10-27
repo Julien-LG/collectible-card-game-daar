@@ -5,10 +5,11 @@ import { getCardsFromFirstSet } from '../services/cardService';
 import Card from './Card';
 
 interface CollectionPageProps {
+  wallet : any;
   ownedCards: string[];
 }
 
-const CollectionPage: React.FC<CollectionPageProps> = ({ ownedCards }) => {
+const CollectionPage: React.FC<CollectionPageProps> = ({ wallet, ownedCards }) => {
   const [pokemonData, setPokemonData] = useState<CardInterface[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 

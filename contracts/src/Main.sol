@@ -20,6 +20,8 @@ contract Main is Ownable {
 
 	Boosters public boosters = new Boosters("BOOSTER");
 
+	event BoosterOpened(string[] cards);
+
 	constructor() Ownable(msg.sender) {
 		administrateur = msg.sender;
 		console.log("Main contract deployed");
@@ -116,26 +118,8 @@ contract Main is Ownable {
 		return cards;
 	}
 
-	// function getAllUserCardsLinks(address owner) public view returns (string[] memory) {
-	// 	uint nb = balanceOf(owner);
-	// 	string[] memory links = new string[](nb);
-	// 	uint indexNewTable = 0;
-
-	// 	for (uint i = 0; i < NFTcount; i++) {
-	// 		if (owners[i] == owner) {
-	// 			links[indexNewTable] = getCardImage(i);
-	// 			indexNewTable++;
-	// 		}
-	// 	}
-	// 	return links;
-	// }
-
 	function mintBooster(string[] memory newCardsIds) public {
-		// uint32[] memory cards = new uint32[](10); // la liste des idNFT des cartes du booster
-		
 		for (uint i = 0; i < 10; i++) {
-			// cards[i] = 1;
-			// cards[i] = uint32(NFTcount);
 			mint(administrateur, newCardsIds[i], 0);
 		}
 
@@ -151,8 +135,7 @@ contract Main is Ownable {
 	}
 
 	// Ouvre un booster et renvoie les ids des cartes obtenues
-	function openABooster(address userAdr) public returns (string[] memory) {
-		// boosters.mint(userAdr);
+	function openABooster(address userAdr) public {
 		string[] memory cards = boosters.openBooster(userAdr, 0);
 		for (uint i = 0; i < cards.length; i++) {
 			transferCard(i, userAdr);
@@ -161,8 +144,8 @@ contract Main is Ownable {
 		for (uint i = 0; i < cards.length; i++) {
 			console.log(cards[i]);
 		}
-		return cards;
-		//TODO : renvoie actuellement les id des NFT, mais il faut les id des cartes ou des refs aux cartes de l'API pour faire le lien
+
+		emit BoosterOpened(cards);
 	}
 
 	function createGameCollection(string calldata name, int cardCount) external {

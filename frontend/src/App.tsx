@@ -204,7 +204,7 @@ export const App: React.FC = () => {
 
         <Routes>
           <Route path="/" element={<BoosterPage wallet={wallet} boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} addOwnedCard={addOwnedCard}/>} />
-          <Route path="/collection" element={<CollectionPage ownedCards={ownedCards}/>} />
+          <Route path="/collection" element={<CollectionPage wallet={wallet} ownedCards={ownedCards}/>} />
           <Route path="/shop" element={<ShopPage wallet={wallet} boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} />} />
           {isAdmin() && (
             <Route path="/admin" element={<AdminPage wallet={wallet}/>} />
