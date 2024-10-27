@@ -10,6 +10,7 @@ import './App.css';
 import BoosterPage from './components/BoosterPage';
 import CollectionPage from './components/CollectionPage';
 import ShopPage from './components/ShopPage';
+import MarketplacePage from './components/MarketplacePage';
 import AdminPage from './components/AdminPage';
 
 type Canceler = () => void
@@ -184,6 +185,9 @@ export const App: React.FC = () => {
             <li>
               <Link to="/collection">Collection</Link>
             </li>
+            <li>
+              <Link to="/marketplace">Marketplace</Link>
+            </li>
             {isAdmin() && (
               <li>
                 <Link to="/admin">Admin</Link>
@@ -196,6 +200,7 @@ export const App: React.FC = () => {
           <Route path="/" element={<BoosterPage wallet={wallet} boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} addOwnedCard={addOwnedCard}/>} />
           <Route path="/collection" element={<CollectionPage wallet={wallet} ownedCards={ownedCards} setOwnedCards={setOwnedCards}/>} />
           <Route path="/shop" element={<ShopPage wallet={wallet} boostersOwned={boostersOwned} setBoostersOwned={setBoostersOwned} />} />
+          <Route path="/marketplace" element={<MarketplacePage wallet={wallet} ownedCards={ownedCards} setOwnedCards={setOwnedCards} />} />
           {isAdmin() && (
             <Route path="/admin" element={<AdminPage wallet={wallet}/>} />
           )}
