@@ -27,7 +27,7 @@ const ShopPage: React.FC<ShopPageProps> = ({ wallet, boostersOwned, setBoostersO
     const userAddress: string = wallet?.details?.account || ''
     if (userAddress === '') return
 
-    wallet?.contract.buyABooster(userAddress)
+    wallet?.contract.buyABooster(userAddress, { value: 20000000 }) //value: 20 * Math.pow(10, 18)
     setBoostersOwned((prev) => prev + 1); // Increment the number of boosters owned
   }
 

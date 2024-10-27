@@ -81,7 +81,7 @@ contract Boosters is Ownable, ERC721 {
         return 0; // TODO : a modifier quand on gerera plusieurs collections
     }
 
-    function buyBooster(address admin, address to, uint collectionId) public  { // TODO : payable
+    function buyBooster(address payable admin, address to, uint collectionId) public  payable { // TODO : payable
         // require(msg.value == boosters[tokenId].price, "Le montant envoyé n'est pas suffisant");
         // payable(owner()).transfer(msg.value);
         // _transfer(owner(), to, tokenId);
@@ -92,7 +92,8 @@ contract Boosters is Ownable, ERC721 {
         
         console.log("idBooster : ", idBooster);
         // require(msg.value == boosters[idBooster].price, "Le montant envoye n'est pas suffisant");
-        // payable(owner()).transfer(msg.value);
+        
+        admin.transfer(msg.value ); // transfere l'argent au proprietaire du contrat //(msg.value * 10^18)
         boostersOwners[idBooster] = to;
         boosterFreeCount--;
     }

@@ -151,8 +151,8 @@ contract Main is Ownable {
 		boosters.mint(administrateur, 0, newCardsIds);
 	}
 
-	function buyABooster(address userAdr) public {
-		boosters.buyBooster(administrateur, userAdr, 0);
+	function buyABooster(address userAdr) public payable{
+		boosters.buyBooster(payable(administrateur), userAdr, 0);
 	}
 
 	function getUserBoosterCount(address user) public view returns (uint32) {
