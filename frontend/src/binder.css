@@ -24,6 +24,10 @@
     border-radius: 5% / 3.5%;
 }
 
+.card-slot.drag-over {
+    border-color: #00aaff;
+    background-color: #e0f7ff;
+}
 .empty-slot {
     color: #aaa;
     font-style: italic;

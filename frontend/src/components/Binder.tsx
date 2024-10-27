@@ -16,6 +16,7 @@ const Binder: React.FC<BinderProps> = ({ wallet, ownedCards, setOwnedCards }) =>
   const [pokemonData, setPokemonData] = useState<CardInterface[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(0);
+  const [draggedCardIndex, setDraggedCardIndex] = useState<number | null>(null);
 
 
   const CARDS_PER_PAGE = 25; 
@@ -110,6 +111,28 @@ const Binder: React.FC<BinderProps> = ({ wallet, ownedCards, setOwnedCards }) =>
   };
 
 
+  const onDragStart = (index: number) => {
+    setDraggedCardIndex(index);
+  };
+
+  // Handle drag over slot
+  const onDragOver = (e: React.DragEvent) => {
+    e.preventDefault(); // Prevent default to allow drop
+  };
+
+  // Handle drop into new slot
+  const onDrop = (index: number) => {
+    if (draggedCardIndex === null || draggedCardIndex === index) return;
+
+    const updatedData = [...pokemonData];
+    const draggedCard = updatedData[draggedCardIndex];
+    updatedData[draggedCardIndex] = updatedData[index];
+    updatedData[index] = draggedCard;
+
+    setPokemonData(updatedData);
+    setDraggedCardIndex(null);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -119,9 +142,23 @@ const Binder: React.FC<BinderProps> = ({ wallet, ownedCards, setOwnedCards }) =>
         <h1>Your Binder</h1>
 
         <div className="Binder-cards">
-            {getPageData().map((card: CardInterface, index) => (
-            <div className="card-slot" key={index}>
-                <Card card={card} owned={ownedCards.includes(card.id)} allowFlip={false} inBinder />
+            {getPageData().map((card: CardInterface | null, index) => (
+            <div
+                className="card-slot"
+                key={index}
+                onDragOver={onDragOver}
+                onDrop={() => onDrop(index)}
+            >
+                {card ? (
+                    <div
+                        draggable
+                        onDragStart={() => onDragStart(index)}
+                    >
+                        <Card card={card} owned={ownedCards.includes(card.id)} allowFlip={false} inBinder />
+                    </div>
+                ) : (
+                    <div className="empty-slot">Empty Slot</div>
+                )}
             </div>
             ))}
             {Array.from({ length: CARDS_PER_PAGE - getPageData().length }).map((_, index) => (
