@@ -59,6 +59,7 @@ export const App: React.FC = () => {
   const [cardImg, setCardImg] = useState<string>('')
   const [ownerCard, setOwnerCard] = useState<string>('idk')
   const [adminAdr, setAdminAdr] = useState<string>('idk')
+  // let balance = -1
 
   const [boostersOwned, setBoostersOwned] = useState(0); // Track owned boosters
   const [ownedCards, setOwnedCards] = useState<string[]>([]); // State for owned card IDs
@@ -82,9 +83,22 @@ export const App: React.FC = () => {
     wallet?.contract.transferCard(0, userAddress)
   }
 
+  const getOwner = () => {
+    wallet?.contract.getAdmin().then((ownerAdress: string) => {
+      setAdminAdr(ownerAdress)
+      console.log('Admin adress : ', ownerAdress)
+    })
+  }
+
   const isAdmin = () => {
     return wallet?.details?.account === adminAdr
   }
+  
+  useEffect(() => {
+    if (wallet) {
+      getOwner()
+    }
+  }, [wallet]) // Re-appelle si le wallet change
 
   /**/
   return (
