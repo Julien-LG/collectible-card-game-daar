@@ -141,9 +141,9 @@ p {
 }
 
 .card {
-  perspective: 1000px; /* Allows for a 3D effect */
-  width: 294px; 
-  height: 400px; 
+  perspective: 1000px;
+  width: 220px; 
+  height: 300px; 
   margin: 20px;
 
   position: relative;
@@ -231,6 +231,7 @@ p {
   7px 7px 10px -5px var(--color2), 
   0 0 13px 4px rgba(255,255,255,0.3),
   0 55px 35px -20px rgba(0, 0, 0, 0.5);
+  z-index: 10;
 }
 
 .card-back:hover {
@@ -241,6 +242,7 @@ p {
   -7px -7px 10px -5px var(--color2), 
   0 0 13px 4px rgba(255,255,255,0.3),
   0 55px 35px -20px rgba(0, 0, 0, 0.5);
+  z-index: 10;
 }
 
 

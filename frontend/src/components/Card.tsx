@@ -4,10 +4,11 @@ import { Card as CardInterface } from '../interfaces/card';
 interface CardProps {
   card: CardInterface;
   owned: boolean;
-  allowFlip: boolean; // Permet d'avoir une collection où les cartes sont toujours visibles
+  allowFlip: boolean; 
+  inBinder?: boolean;
 }
 
-export const Card: React.FC<CardProps> = ({ card, owned, allowFlip}) => {
+export const Card: React.FC<CardProps> = ({ card, owned, allowFlip, inBinder}) => {
     const [hidden, setHidden] = useState(false || !allowFlip); // État pour suivre le flip
     const [clicked, setClicked] = useState(0); // État pour suivre le nombre de clics
 
@@ -66,7 +67,7 @@ export const Card: React.FC<CardProps> = ({ card, owned, allowFlip}) => {
                     <img src={'images/back_of_card.jpg'} alt={card.name} />
                 </div>
             </div>
-            {!allowFlip ? (
+            {!allowFlip && !inBinder ? (
             <div className="card-info">
                 <p>Card Name: {card.name}</p>
                 <p>Rarity: {card.rarity}</p>

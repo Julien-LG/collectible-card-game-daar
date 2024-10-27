@@ -1,82 +1,52 @@
-/* Binder styles */
 .Binder {
-    display: grid;
-    gap: 10px;
     padding: 20px;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    position: relative;
-    background-color: #f8f9fa;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-  }
-  
-  /* Styling individual cards in the Binder */
-  .Binder-cards {
-    position: relative;
+}
+
+.Binder-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 150px);
-    grid-template-rows: repeat(auto-fill, 200px);
-    gap: 15px;
-  }
-  
-  /* Card element for drag-and-drop and hover effects */
-  .Binder .card {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+
+.card-slot {
+    width: 154px;
+    height: 210px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed #ccc;
+    background-color: #f9f9f9;
+    border-radius: 5% / 3.5%;
+}
+
+.empty-slot {
+    color: #aaa;
+    font-style: italic;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    color : white;
+}
+.pagination-controls button {
+    color: rgb(0, 0, 0);
+}
+
+.sorting-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.Binder .card{
     width: 150px;
-    height: 200px;
-    position: absolute; /* Allows free placement within grid */
-    cursor: grab;
-    transition: transform 0.2s ease-in-out;
-  }
-  
-  .Binder .card:active {
-    cursor: grabbing;
-  }
-  
-  /* Hover effect for cards to mimic realistic interactive feedback */
-  .Binder .card:hover {
-    transform: scale(1.05);
-    z-index: 2;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-  }
-  
-  /* Shimmer effect for sorting buttons */
-  .sorting-buttons button {
-    position: relative;
-    display: inline-block;
-    overflow: hidden;
-    color: #333;
-    font-weight: bold;
-    border: none;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-    margin: 5px;
-  }
-  
-  .sorting-buttons button:hover .shimmer {
-    transform: translateX(0);
-    transition: transform 0.3s ease;
-  }
-  
-  .sorting-buttons .shimmer {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateX(-100%);
-  }
-  
-  /* Style for card text */
-  .Binder .card .text {
-    font-size: 14px;
-    color: #333;
-    text-align: center;
-    margin-top: 10px;
-  }
-  
+    height: 206px;
+}

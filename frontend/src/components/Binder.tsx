@@ -1,5 +1,5 @@
 // src/components/Binder.tsx
-import styles from '../binder.css';
+import '../binder.css';
 import React, { useEffect, useState } from 'react';
 import { Card as CardInterface } from '../interfaces/card';
 import { getCardsFromIds } from '../services/cardService';
@@ -15,7 +15,10 @@ interface BinderProps {
 const Binder: React.FC<BinderProps> = ({ wallet, ownedCards, setOwnedCards }) => {
   const [pokemonData, setPokemonData] = useState<CardInterface[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [currentPage, setCurrentPage] = useState<number>(0);
 
+
+  const CARDS_PER_PAGE = 25; 
 
   useEffect(() => {
     if (wallet) {
@@ -58,7 +61,7 @@ const Binder: React.FC<BinderProps> = ({ wallet, ownedCards, setOwnedCards }) =>
   };
 
   // Function to sort cards by the specified criterion
-  const sortCards = (criterion: 'number' | 'id' | 'rarity' | 'type' | 'name') => {
+  /*const sortCards = (criterion: 'number' | 'id' | 'rarity' | 'type' | 'name') => {
     const sortedData = [...pokemonData];
 
     switch (criterion) {
@@ -88,6 +91,23 @@ const Binder: React.FC<BinderProps> = ({ wallet, ownedCards, setOwnedCards }) =>
 
     setPokemonData(sortedData);
   };
+    */
+
+  const maxPages = Math.ceil(pokemonData.length / CARDS_PER_PAGE);
+
+  const handleNextPage = () => {
+    if (currentPage < maxPages - 1) setCurrentPage(currentPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 0) setCurrentPage(currentPage - 1);
+  };
+
+  const getPageData = () => {
+    const start = currentPage * CARDS_PER_PAGE;
+    const end = start + CARDS_PER_PAGE;
+    return pokemonData.slice(start, end);
+  };
 
 
   if (loading) {
@@ -96,35 +116,56 @@ const Binder: React.FC<BinderProps> = ({ wallet, ownedCards, setOwnedCards }) =>
 
   return (
     <div className="Binder">
-      <h1>Your Binder</h1>
+        <h1>Your Binder</h1>
 
-      <div className="Binder-cards">
-        {pokemonData.map((card: CardInterface) => (
-          <Card key={card.id} card={card} owned={ownedCards.includes(card.id)} allowFlip={false} />
-        ))}
-      </div>
+        <div className="Binder-cards">
+            {getPageData().map((card: CardInterface, index) => (
+            <div className="card-slot" key={index}>
+                <Card card={card} owned={ownedCards.includes(card.id)} allowFlip={false} inBinder />
+            </div>
+            ))}
+            {Array.from({ length: CARDS_PER_PAGE - getPageData().length }).map((_, index) => (
+            <div className="card-slot empty-slot" key={`empty-${index}`}>
+                Empty Slot
+            </div>
+            ))}
+        </div>
+
+        <div className="pagination-controls">
+            <button onClick={handlePrevPage} disabled={currentPage === 0}>
+                Previous Page
+            </button>
+                <span>
+                    Page {currentPage + 1} of {maxPages}
+                </span>
+            <button onClick={handleNextPage} disabled={currentPage === maxPages - 1}>
+                Next Page
+            </button>
+        </div>
+        {/*
         <div className="sorting-buttons">
-          <button onClick={() => sortCards('id')}>
-              <span className="text">Sort by ID</span>
-              <span className="shimmer"></span>
-          </button>
-          <button onClick={() => sortCards('number')}>
-            <span className="text">Sort by Number</span>
-            <span className="shimmer"></span>
-          </button>
-          <button onClick={() => sortCards('rarity')}>
-            <span className="text">Sort by Rarity</span>
-            <span className="shimmer"></span>
-          </button>
-          <button onClick={() => sortCards('type')}>
-            <span className="text">Sort by Type</span>
-            <span className="shimmer"></span>
-          </button>
-          <button onClick={() => sortCards('name')}>
-            <span className="text">Sort by Name</span>
-            <span className="shimmer"></span>
-          </button>
-      </div>
+            <button onClick={() => sortCards('id')}>
+                <span className="text">Sort by ID</span>
+                <span className="shimmer"></span>
+            </button>
+            <button onClick={() => sortCards('number')}>
+                <span className="text">Sort by Number</span>
+                <span className="shimmer"></span>
+            </button>
+            <button onClick={() => sortCards('rarity')}>
+                <span className="text">Sort by Rarity</span>
+                <span className="shimmer"></span>
+            </button>
+            <button onClick={() => sortCards('type')}>
+                <span className="text">Sort by Type</span>
+                <span className="shimmer"></span>
+            </button>
+            <button onClick={() => sortCards('name')}>
+                <span className="text">Sort by Name</span>
+                <span className="shimmer"></span>
+            </button>
+        </div>
+        */}
     </div>
   );
 };

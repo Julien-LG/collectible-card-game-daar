@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import './App.css';
 import * as ethereum from '@/lib/ethereum';
 import * as main from '@/lib/main';
-import { ethers } from 'ethers';
 
 //Notre code pour le front-end
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
@@ -56,9 +55,6 @@ export async function loadOwnerNbCard(wallet: any) {
 
 export const App: React.FC = () => {
   const wallet = useWallet()
-  const [balance, setBalance] = useState<number | null>(null)
-  const [cardImg, setCardImg] = useState<string>('')
-  const [ownerCard, setOwnerCard] = useState<string>('idk')
   const [adminAdr, setAdminAdr] = useState<string>('idk')
   const [boostersOwned, setBoostersOwned] = useState(0); // Track owned boosters
   const [ownedCards, setOwnedCards] = useState<string[]>([]); // State for owned card IDs
